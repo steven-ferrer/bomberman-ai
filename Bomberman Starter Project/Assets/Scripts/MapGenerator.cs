@@ -48,7 +48,8 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	public void GenerateMap(){
-
+		
+		//Initialize Destructible Walls
 		allTileCoords = new List<Coord> ();
 		for (int x = 1; x < mapSize.x - 1; x++) {
 			for (int y = 1; y < mapSize.y - 1; y++) {
@@ -59,13 +60,23 @@ public class MapGenerator : MonoBehaviour {
 		}
 		System.Random rng = new System.Random ();
 		shuffledTileCoords = new Queue<Coord> (Utility.ShuffleArray (allTileCoords.ToArray (), rng.Next(1,100)));
+		//----------------------------------------------------------------------------------------------------------------------------------------//
 
-		string holderName = "Generated Map";
-		if (transform.Find (holderName)) {
-			DestroyImmediate (transform.Find (holderName).gameObject);
+
+		//Holders Name
+		string strMap = "Generated Map";
+
+		if (transform.Find (strMap)) {
+			DestroyImmediate (transform.Find (strMap).gameObject);
 		}
 
-		Transform mapHolder = new GameObject (holderName).transform;
+		//Holders
+		Transform mapHolder = new GameObject (strMap).transform;
+		Transform indestructibleHolder = new GameObject ("Indestructible Walls").transform;
+		Transform destructibleHolder = new GameObject ("Destructible Walls").transform;
+		Transform outerwallHolder = new GameObject ("Outer Walls").transform;
+		Transform floorHolder = new GameObject ("Floors").transform;
+
 		mapHolder.parent = transform;
 
 		for (int x = 0; x < mapSize.x; x++) {
@@ -73,36 +84,44 @@ public class MapGenerator : MonoBehaviour {
 				Vector3 tilePosition = new Vector3 (-mapSize.x / 2 + 0.5f + x, 0, -mapSize.y / 2 + 0.5f + y);
 				Transform newTile;
 
+				//Floors
 				if ((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)) {
 					newTile = Instantiate (tile1, tilePosition, Quaternion.Euler (Vector3.right * 90)) as Transform;
 				} else {
 				 	newTile = Instantiate (tile2, tilePosition , Quaternion.Euler (Vector3.right * 90)) as Transform;
 				}
 
+				//Outer Walls
 				if (x == 0 || y == 0 || y == mapSize.y - 1 || x == mapSize.x - 1) {
 					Transform newWall = Instantiate (outerWall, tilePosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-					newWall.parent = mapHolder;
+					newWall.parent = outerwallHolder;
+					outerwallHolder.parent = mapHolder;
 				}
 
+				//Indestructible Walls
 				if ( x > 1 && y > 1 && x < mapSize.x - 2 && y < mapSize.y - 2) {
 					if (y % 2 == 0 && x % 2 == 0) {
 						Transform newWall = Instantiate (indestructibleWall, tilePosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-						newWall.parent = mapHolder;
+						newWall.parent = indestructibleHolder;
+						indestructibleHolder.parent = mapHolder;
 					}
 				}
 
-				newTile.parent = mapHolder;
+				newTile.parent = floorHolder;
+				floorHolder.parent = mapHolder;
 			}
 		}
-
 
 		//Desctructible Wall
 		for (int x = 0; x < wallCount; x++) {
 			Coord randomCoord = GetRandomCoord ();
 			Vector3 wallPosition = CoorToPosition (randomCoord.x, randomCoord.y);
 			Transform newWall = Instantiate (destructibleWall, wallPosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-			newWall.parent = mapHolder;
+			newWall.parent = destructibleHolder;
+			destructibleHolder.parent = mapHolder;
 		}
+
+
 	}
 
 	Vector3 CoorToPosition(int x, int y){

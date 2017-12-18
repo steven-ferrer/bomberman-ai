@@ -2,6 +2,7 @@
 - Automatic Map Generator *
 - Player Movements *
 - Bomb Position Placement for Collider (bugs) *
-- Dynamic Code movements for Agents (C#)
+- Dynamic Code movements for Agents (C#) *
+- Separate Holders for Blocks, floors and walls *
 - Particle System (bugs)
 - Other Action for Agents
