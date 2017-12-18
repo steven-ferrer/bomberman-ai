@@ -1,0 +1,7 @@
+<Game Environment>
+- Automatic Map Generator *
+- Player Movements *
+- Bomb Position Placement for Collider (bugs) *
+- Dynamic Code movements for Agents (C#)
+- Particle System (bugs)
+- Other Action for Agents
