@@ -66,16 +66,21 @@ public class MapGenerator : MonoBehaviour {
 		//Holders Name
 		string strMap = "Generated Map";
 
+		//LayerName
+		string layerName = "Blocks";
+
 		if (transform.Find (strMap)) {
 			DestroyImmediate (transform.Find (strMap).gameObject);
 		}
 
 		//Holders
 		Transform mapHolder = new GameObject (strMap).transform;
-		Transform indestructibleHolder = new GameObject ("Indestructible Walls").transform;
-		Transform destructibleHolder = new GameObject ("Destructible Walls").transform;
-		Transform outerwallHolder = new GameObject ("Outer Walls").transform;
-		Transform floorHolder = new GameObject ("Floors").transform;
+		Transform transIndes = new GameObject ("Indestructible Walls").transform;
+		Transform transDes = new GameObject ("Destructible Walls").transform;
+		Transform transWall = new GameObject ("Outer Walls").transform;
+		Transform transFloor = new GameObject ("Floors").transform;
+
+		LayerMask layerBlock = LayerMask.NameToLayer (layerName);
 
 		mapHolder.parent = transform;
 
@@ -94,21 +99,23 @@ public class MapGenerator : MonoBehaviour {
 				//Outer Walls
 				if (x == 0 || y == 0 || y == mapSize.y - 1 || x == mapSize.x - 1) {
 					Transform newWall = Instantiate (outerWall, tilePosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-					newWall.parent = outerwallHolder;
-					outerwallHolder.parent = mapHolder;
+					newWall.parent = transWall;
+					transWall.parent = mapHolder;
+					newWall.gameObject.layer = layerBlock;
 				}
 
 				//Indestructible Walls
 				if ( x > 1 && y > 1 && x < mapSize.x - 2 && y < mapSize.y - 2) {
 					if (y % 2 == 0 && x % 2 == 0) {
 						Transform newWall = Instantiate (indestructibleWall, tilePosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-						newWall.parent = indestructibleHolder;
-						indestructibleHolder.parent = mapHolder;
+						newWall.parent = transIndes;
+						transIndes.parent = mapHolder;
+						newWall.gameObject.layer = layerBlock;
 					}
 				}
 
-				newTile.parent = floorHolder;
-				floorHolder.parent = mapHolder;
+				newTile.parent = transFloor;
+				transFloor.parent = mapHolder;
 			}
 		}
 
@@ -117,11 +124,10 @@ public class MapGenerator : MonoBehaviour {
 			Coord randomCoord = GetRandomCoord ();
 			Vector3 wallPosition = CoorToPosition (randomCoord.x, randomCoord.y);
 			Transform newWall = Instantiate (destructibleWall, wallPosition + Vector3.up * 1f, Quaternion.identity) as Transform;
-			newWall.parent = destructibleHolder;
-			destructibleHolder.parent = mapHolder;
+			newWall.parent = transDes;
+			transDes.parent = mapHolder;
+			newWall.gameObject.layer = layerBlock;
 		}
-
-
 	}
 
 	Vector3 CoorToPosition(int x, int y){
