@@ -24,6 +24,11 @@ using UnityEngine;
 using System.Collections;
 
 public class GlobalStateManager : MonoBehaviour {
+
+	void Start(){
+		
+	}
+
     public void PlayerDied(int playerNumber) {
 
     }
