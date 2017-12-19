@@ -5,18 +5,25 @@ using UnityEngine;
 public class Bomb : MonoBehaviour {
 	public GameObject explosionPrefab;
 	public LayerMask levelMask;
+	public AudioClip soundExplosion;
 
 	public int bombRange = 3;
 
 	private bool exploded = false;
+	private bool chainReaction = false;
+	AudioSource audioSource;
 
 	void Start () {
-		Invoke("Explode", 3f);
+		audioSource = GetComponent<AudioSource> ();
+		Invoke("Explode", 4f);
 	}
 
 	void Explode(){
 		Instantiate(explosionPrefab, transform.position, Quaternion.identity); 
-
+		if (chainReaction == false) {
+			audioSource.PlayOneShot (soundExplosion, 0.7F);
+			chainReaction = true;
+		}
 		StartCoroutine(CreateExplosions(Vector3.forward));
 		StartCoroutine(CreateExplosions(Vector3.right));
 		StartCoroutine(CreateExplosions(Vector3.back));
@@ -25,7 +32,7 @@ public class Bomb : MonoBehaviour {
 		GetComponent<MeshRenderer>().enabled = false; 
 		exploded = true;
 		transform.Find("Collider").gameObject.SetActive(false); 
-		Destroy(gameObject, .3f); 
+		Destroy(gameObject, .4f); 
 	}
 
 	private IEnumerator CreateExplosions(Vector3 direction) {
@@ -35,7 +42,10 @@ public class Bomb : MonoBehaviour {
 
 			if (!hit.collider) { 
 				Instantiate (explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation); 
-			} else { 
+			} else {
+				if (hit.collider.CompareTag ("Destructible")) {
+					Destroy (hit.transform.gameObject);
+				}
 				break; 
 			}
 
@@ -45,7 +55,8 @@ public class Bomb : MonoBehaviour {
 
 	public void OnTriggerEnter(Collider other){
 		if (!exploded && other.CompareTag("Explosion")) { 
-			CancelInvoke("Explode"); 
+			CancelInvoke("Explode");
+			chainReaction = true;
 			Explode(); 
 		}  
 	}

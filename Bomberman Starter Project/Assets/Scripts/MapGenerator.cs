@@ -127,6 +127,7 @@ public class MapGenerator : MonoBehaviour {
 			newWall.parent = transDes;
 			transDes.parent = mapHolder;
 			newWall.gameObject.layer = layerBlock;
+			newWall.gameObject.tag = "Destructible";
 		}
 	}
 

@@ -1,12 +1,17 @@
 <Game Environment>
 - Automatic Map Generator *
+- Separate Holders for Blocks, floors and walls *
 - Player Movements *
 - Bomb Position Placement for Collider (bugs) *
+- Chain Reaction for Bombs *
 - Dynamic Code movements for Agents (C#) *
-- Separate Holders for Blocks, floors and walls *
 - Player collision on explosion (dead + winning agents) *
 - Limit the bomb range and maximum drop bomb of all agents *
-- Player size, collide on small gap (bugs)
-- Bomb placement duplicate gameobject in same tile (bugs)
+- Explosion Size to prevent die into small gap spacing (bugs) *
+- Bomb placement duplicate gameobject in same tile (bugs) *
+- Sountrack for Explosion *
+- Explode Destructible Walls *
+- Can't place bomb in the recentPosition (bugs) *
+- Pushing Back Agents (Bugs) 
 - Particle System (bugs)
 - Other Action for Agents

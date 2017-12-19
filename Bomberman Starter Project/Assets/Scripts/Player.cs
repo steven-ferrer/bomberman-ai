@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class Player : MonoBehaviour {
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour {
 
 	private bool dead = false;
 	private int dropBomb = 0;
+	private LinkedList<Vector3> dropPositions;
 
     //Cached components
     private Rigidbody rigidBody;
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour {
     void Start() {
         //Cache the attached components for better performance and less typing
         rigidBody = GetComponent<Rigidbody>();
+		dropPositions = new LinkedList<Vector3> ();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
     }
@@ -31,7 +34,7 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
 	void Update() {
 		animator.SetBool("Walking", false);
-
+	
 		switch (playerNumber) {
 			case 1:
 			UpdateMovement(KeyCode.W,KeyCode.S,KeyCode.D,KeyCode.A,KeyCode.Space);
@@ -77,9 +80,13 @@ public class Player : MonoBehaviour {
 			bombPrefab.name = "P:" + playerNumber;
 			checkDropBomb();
 			if (dropBomb < maxBomb) {
-				Instantiate (bombPrefab, new Vector3 (Mathf.RoundToInt (myTransform.position.x), 
-					bombPrefab.transform.position.y, Mathf.RoundToInt (myTransform.position.z)),
-					bombPrefab.transform.rotation);
+				Vector3 dropPosition = new Vector3 (Mathf.RoundToInt (myTransform.position.x), bombPrefab.transform.position.y, Mathf.RoundToInt (myTransform.position.z));
+				foreach (Vector3 pos in dropPositions) {
+					if (dropPosition == pos) {
+						return;
+					}
+				}
+				Instantiate (bombPrefab, dropPosition, bombPrefab.transform.rotation);
 			}
 			dropBomb = 0;
         }
@@ -89,21 +96,23 @@ public class Player : MonoBehaviour {
 	 	GameObject[] bombs = null;
 		if (bombs == null) {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
+			dropPositions.Clear ();
 			foreach (GameObject bomb in bombs) {
 				if (bomb.name == "P:" + playerNumber+"(Clone)") {
 					dropBomb++;
+					dropPositions.AddLast (bomb.transform.position);
 				}
 			}
 		}
 	}
 		
     public void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Explosion")) {
+		/*if (other.CompareTag ("Explosion")) {
 			dead = true; 
-			GlobalManager.PlayerDied(playerNumber); 
-			Destroy(gameObject); 
-        }
+			GlobalManager.PlayerDied (playerNumber); 
+			Destroy (gameObject); 
+		} */
+			
     }
-
 
 }

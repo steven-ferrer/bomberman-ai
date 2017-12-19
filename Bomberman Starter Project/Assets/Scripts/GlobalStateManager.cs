@@ -18,12 +18,12 @@ public class GlobalStateManager : MonoBehaviour {
 	void CheckPlayersDeath() {
 		if (deadPlayers == 1) { 
 			if (deadPlayerNumber == 1) { 
-				//Debug.Log("Player 2 is the winner!");
+				Debug.Log("Player 2 is the winner!");
 			} else { 
-				//Debug.Log("Player 1 is the winner!");
+				Debug.Log("Player 1 is the winner!");
 			}
 		} else { 
-			//Debug.Log("The game ended in a draw!");
+			Debug.Log("The game ended in a draw!");
 		}
 	}  
 }
