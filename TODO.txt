@@ -12,6 +12,6 @@
 - Sountrack for Explosion *
 - Explode Destructible Walls *
 - Can't place bomb in the recentPosition (bugs) *
-- Pushing Back Agents (Bugs) 
-- Particle System (bugs)
+- Particle System (bugs) *
+- Pushing Back Agents (Bugs) *
 - Other Action for Agents

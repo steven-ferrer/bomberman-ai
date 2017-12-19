@@ -36,8 +36,8 @@ public class Player : MonoBehaviour {
 		animator.SetBool("Walking", false);
 	
 		switch (playerNumber) {
-			case 1:
-			UpdateMovement(KeyCode.W,KeyCode.S,KeyCode.D,KeyCode.A,KeyCode.Space);
+		case 1:
+			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
 			break;
 			case 2:
 			UpdateMovement(KeyCode.UpArrow,KeyCode.DownArrow,KeyCode.RightArrow,KeyCode.LeftArrow,KeyCode.Return);
@@ -107,12 +107,16 @@ public class Player : MonoBehaviour {
 	}
 		
     public void OnTriggerEnter(Collider other) {
-		/*if (other.CompareTag ("Explosion")) {
+		if(other.CompareTag ("Explosion")) {
 			dead = true; 
 			GlobalManager.PlayerDied (playerNumber); 
 			Destroy (gameObject); 
-		} */
-			
+		} 
+
     }
+		
+		
+
+
 
 }
