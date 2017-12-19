@@ -4,13 +4,17 @@ using System;
 
 public class Player : MonoBehaviour {
 
+	public GlobalStateManager GlobalManager;
+
     //Player parameters
     [Range(1, 2)]
     public int playerNumber = 1;
     public float moveSpeed = 5f;
+	public int maxBomb = 3;
 	public GameObject bombPrefab;
 
-	private const int max_bomb = 3;
+	private bool dead = false;
+	private int dropBomb = 0;
 
     //Cached components
     private Rigidbody rigidBody;
@@ -70,15 +74,34 @@ public class Player : MonoBehaviour {
 
     private void DropBomb() {
         if (bombPrefab) { //Check if bomb prefab is assigned first
-			Instantiate(bombPrefab, new Vector3(Mathf.RoundToInt(myTransform.position.x), 
-				bombPrefab.transform.position.y, Mathf.RoundToInt(myTransform.position.z)),
-				bombPrefab.transform.rotation);  
+			bombPrefab.name = "P:" + playerNumber;
+			checkDropBomb();
+			if (dropBomb < maxBomb) {
+				Instantiate (bombPrefab, new Vector3 (Mathf.RoundToInt (myTransform.position.x), 
+					bombPrefab.transform.position.y, Mathf.RoundToInt (myTransform.position.z)),
+					bombPrefab.transform.rotation);
+			}
+			dropBomb = 0;
         }
     }
+
+	private void checkDropBomb(){
+	 	GameObject[] bombs = null;
+		if (bombs == null) {
+			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
+			foreach (GameObject bomb in bombs) {
+				if (bomb.name == "P:" + playerNumber+"(Clone)") {
+					dropBomb++;
+				}
+			}
+		}
+	}
 		
     public void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Explosion")) {
-            Debug.Log("P" + playerNumber + " hit by explosion!");
+			dead = true; 
+			GlobalManager.PlayerDied(playerNumber); 
+			Destroy(gameObject); 
         }
     }
 

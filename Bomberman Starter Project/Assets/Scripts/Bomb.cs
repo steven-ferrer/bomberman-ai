@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bomb : MonoBehaviour {
-
 	public GameObject explosionPrefab;
 	public LayerMask levelMask;
 
+	public int bombRange = 3;
+
+	private bool exploded = false;
+
 	void Start () {
 		Invoke("Explode", 3f);
-	}
-
-	void Update () {
-		
 	}
 
 	void Explode(){
@@ -24,12 +23,13 @@ public class Bomb : MonoBehaviour {
 		StartCoroutine(CreateExplosions(Vector3.left));  
 
 		GetComponent<MeshRenderer>().enabled = false; 
+		exploded = true;
 		transform.Find("Collider").gameObject.SetActive(false); 
 		Destroy(gameObject, .3f); 
 	}
 
 	private IEnumerator CreateExplosions(Vector3 direction) {
-		for (int i = 1; i < 3; i++) { 
+		for (int i = 1; i <= bombRange; i++) { 
 			RaycastHit hit; 
 			Physics.Raycast (transform.position + new Vector3 (0, .5f, 0), direction, out hit, i, levelMask); 
 
@@ -41,6 +41,13 @@ public class Bomb : MonoBehaviour {
 
 			yield return new WaitForSeconds (.05f);
 		}
+	}
+
+	public void OnTriggerEnter(Collider other){
+		if (!exploded && other.CompareTag("Explosion")) { 
+			CancelInvoke("Explode"); 
+			Explode(); 
+		}  
 	}
 
 

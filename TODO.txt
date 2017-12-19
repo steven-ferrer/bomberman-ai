@@ -4,5 +4,9 @@
 - Bomb Position Placement for Collider (bugs) *
 - Dynamic Code movements for Agents (C#) *
 - Separate Holders for Blocks, floors and walls *
+- Player collision on explosion (dead + winning agents) *
+- Limit the bomb range and maximum drop bomb of all agents *
+- Player size, collide on small gap (bugs)
+- Bomb placement duplicate gameobject in same tile (bugs)
 - Particle System (bugs)
 - Other Action for Agents
