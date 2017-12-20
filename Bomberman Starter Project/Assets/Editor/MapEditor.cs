@@ -9,7 +9,7 @@ public class MapEditor : Editor {
 		base.OnInspectorGUI ();
 		MapGenerator map = target as MapGenerator;
 
-		map.GenerateMap ();
-		map.initializePlayerPosition ();
+		//map.GenerateMap ();
+		//map.initializePlayerPosition ();
 	}
 }

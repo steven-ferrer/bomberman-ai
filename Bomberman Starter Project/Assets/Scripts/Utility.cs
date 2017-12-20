@@ -12,7 +12,6 @@ public static class Utility{
 			array [randomIndex] = array [x];
 			array [x] = tempItem;
 		}
-
 		return array;
 	}
 

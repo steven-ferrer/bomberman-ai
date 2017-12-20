@@ -28,7 +28,9 @@ public class GridScript : MonoBehaviour {
 			for (int y = 0; y < gridSizeY; y++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 				bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis,unwalkableMask));
-				grid [x, y] = new Node (walkable, worldPoint);
+				GameObject go = GetDestructibleObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z));
+				bool des = (go == null) ? false : true;
+				grid [x, y] = new Node (walkable,des, worldPoint);
 			}
 		}
 	}
@@ -40,6 +42,9 @@ public class GridScript : MonoBehaviour {
 			Node playerNode = NodeFromWorldPoint (player.position);
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable) ? Color.white : Color.red;
+				if (n.walkable == false && n.destructible == true) {
+					Gizmos.color = Color.blue;
+				}
 				if (n == playerNode) {
 					Gizmos.color = Color.cyan;
 				}
@@ -58,5 +63,15 @@ public class GridScript : MonoBehaviour {
 		int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
 		return grid [x, y];
+	}
+
+	private GameObject GetDestructibleObjectByPosition(Vector3 position){
+		GameObject[] gameObjects = GameObject.FindGameObjectsWithTag ("Destructible");
+		foreach (GameObject go in gameObjects) {
+			if (go.transform.position == position) {
+				return go;
+			}
+		}
+		return null;
 	}
 }

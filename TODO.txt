@@ -14,7 +14,9 @@
 - Can't place bomb in the recentPosition (bugs) *
 - Particle System (bugs) *
 - Pushing Back Agents (Bugs) *
+- Destructible wall place also in the same position of Indestructible wall (bugs) *
 - Time countdown when less than 30seconds. the map will shrink 
 
 <A* Pathfinding Algorithm>
 - Implementation of Grid and Node from Game World *
+- Separate Destructible and Unwalkable wall (update) *

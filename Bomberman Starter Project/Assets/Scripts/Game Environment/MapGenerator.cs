@@ -55,6 +55,8 @@ public class MapGenerator : MonoBehaviour {
 			for (int y = 1; y < mapSize.y - 1; y++) {
 				if ((x < 3 && y < 3) || (x > mapSize.x - 4 && y < 3) || (x < 3 && y > mapSize.y - 4) || (x > mapSize.x - 4 && y > mapSize.y - 4))
 					continue;
+				if (y % 2 == 0 && x % 2 == 0)
+					continue;
 				allTileCoords.Add (new Coord (x, y));
 			}
 		}
@@ -111,6 +113,7 @@ public class MapGenerator : MonoBehaviour {
 						newWall.parent = transIndes;
 						transIndes.parent = mapHolder;
 						newWall.gameObject.layer = layerBlock;
+						newWall.gameObject.tag = "Indestructible";
 					}
 				}
 
