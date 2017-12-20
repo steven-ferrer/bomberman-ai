@@ -14,4 +14,7 @@
 - Can't place bomb in the recentPosition (bugs) *
 - Particle System (bugs) *
 - Pushing Back Agents (Bugs) *
-- Other Action for Agents
+- Time countdown when less than 30seconds. the map will shrink 
+
+<A* Pathfinding Algorithm>
+- Implementation of Grid and Node from Game World *
