@@ -16,7 +16,7 @@ public class Player : MonoBehaviour {
 
 	private bool dead = false;
 	private int dropBomb = 0;
-	private LinkedList<Vector3> dropPositions;
+	private List<Vector3> dropPositions;
 
     //Cached components
     private Rigidbody rigidBody;
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour {
     void Start() {
         //Cache the attached components for better performance and less typing
         rigidBody = GetComponent<Rigidbody>();
-		dropPositions = new LinkedList<Vector3> ();
+		dropPositions = new List<Vector3> ();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
     }
@@ -100,7 +100,7 @@ public class Player : MonoBehaviour {
 			foreach (GameObject bomb in bombs) {
 				if (bomb.name == "P:" + playerNumber+"(Clone)") {
 					dropBomb++;
-					dropPositions.AddLast (bomb.transform.position);
+					dropPositions.Add (bomb.transform.position);
 				}
 			}
 		}
