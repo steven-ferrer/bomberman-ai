@@ -16,7 +16,9 @@
 - Pushing Back Agents (Bugs) *
 - Destructible wall place also in the same position of Indestructible wall (bugs) *
 - Time countdown when less than 30seconds. the map will shrink 
+- Store safeplace into list then randomize to place the position of player
 
 <A* Pathfinding Algorithm>
 - Implementation of Grid and Node from Game World *
 - Separate Destructible and Unwalkable wall (update) *
+- Converted Diagonal distance into Manhattan Distance (4 Direction) *

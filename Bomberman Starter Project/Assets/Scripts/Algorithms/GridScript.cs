@@ -62,10 +62,14 @@ public class GridScript : MonoBehaviour {
 
 	public List<Node> GetNeighbours(Node node){
 		List<Node> neighbours = new List<Node> ();
-
+		Debug.Log ("(" + node.gridX + "," + node.gridY + ")");
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0) 
+					continue;
+
+				//Update Neighbours only for left,right,up,down side (Manhattan Distance)
+				if ((x == -1 && y == -1) || (x == -1 && y == 1) || (x == 1 && y == -1) || (x == 1 && y == 1))
 					continue;
 				
 				int checkX = node.gridX + x;
@@ -73,6 +77,7 @@ public class GridScript : MonoBehaviour {
 
 				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
 					neighbours.Add (grid [checkX, checkY]);
+					Debug.Log ("("+checkX+","+checkY+") => " +  "("+grid [checkX, checkY].gridX+","+grid [checkX, checkY].gridY+")");
 				}
 			}
 		}
