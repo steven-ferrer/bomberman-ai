@@ -22,3 +22,4 @@
 - Implementation of Grid and Node from Game World *
 - Separate Destructible and Unwalkable wall (update) *
 - Converted Diagonal distance into Manhattan Distance (4 Direction) *
+- Optimized Pathfinding algorithm using Heap *

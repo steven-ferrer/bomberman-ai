@@ -4,7 +4,17 @@ using System.Collections;
 public class GlobalStateManager : MonoBehaviour {
 
 	private int deadPlayers = 0;
-	private int deadPlayerNumber = -1;  
+	private int deadPlayerNumber = -1;
+	MapGenerator mapGenerator;
+
+	void Start(){
+		mapGenerator = new MapGenerator ();
+	}
+
+	void Update(){
+		mapGenerator.GenerateMap ();
+		mapGenerator.initializePlayerPosition ();
+	}
 
     public void PlayerDied(int playerNumber) {
 		deadPlayers++; 

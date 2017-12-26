@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GridScript : MonoBehaviour {
-
+	
 	public Transform player;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
@@ -18,6 +18,12 @@ public class GridScript : MonoBehaviour {
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 		CreateGrid ();
+	}
+
+	public int MaxSize{
+		get{
+			return gridSizeX * gridSizeY; 
+		}
 	}
 
 	void CreateGrid(){
@@ -52,7 +58,7 @@ public class GridScript : MonoBehaviour {
 				if (path != null) {
 					if (path.Contains (n)) {
 						Gizmos.color = Color.black;
-						Debug.Log(n.gridX + "," + n.gridY + " = " + n.gCost + "," + n.hCost + ","+n.fCost); 
+						//Debug.Log(n.gridX + "," + n.gridY + " = " + n.gCost + "," + n.hCost + ","+n.fCost); 
 					}
 				}
 				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f));
@@ -62,7 +68,7 @@ public class GridScript : MonoBehaviour {
 
 	public List<Node> GetNeighbours(Node node){
 		List<Node> neighbours = new List<Node> ();
-		Debug.Log ("(" + node.gridX + "," + node.gridY + ")");
+		//Debug.Log ("(" + node.gridX + "," + node.gridY + ")");
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0) 
@@ -77,7 +83,7 @@ public class GridScript : MonoBehaviour {
 
 				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
 					neighbours.Add (grid [checkX, checkY]);
-					Debug.Log ("("+checkX+","+checkY+") => " +  "("+grid [checkX, checkY].gridX+","+grid [checkX, checkY].gridY+")");
+					//Debug.Log ("("+checkX+","+checkY+") => " +  "("+grid [checkX, checkY].gridX+","+grid [checkX, checkY].gridY+")");
 				}
 			}
 		}
