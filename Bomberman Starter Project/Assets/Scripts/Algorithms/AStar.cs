@@ -14,8 +14,12 @@ public class AStar : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Input.GetKey (KeyCode.P)) {
+		if (Input.GetKey (KeyCode.F)) {
 			FindPath (seeker.position, target.position);
+			grid.UpdatePath ();
+		}
+		if (Input.GetKey (KeyCode.C)) {
+			grid.ClearPath ();
 		}
 	}
 

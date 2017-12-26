@@ -9,15 +9,45 @@ public class GridScript : MonoBehaviour {
 	public Vector2 gridWorldSize;
 	public float nodeRaduis;
 
+	public List<Node> path;
+
 	Node[,] grid;
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
+
+
+	public void UpdatePath(){
+		if (grid != null) {
+			Node playerNode = NodeFromWorldPoint (player.position);
+			foreach (Node n in grid) {
+				if (path != null) {
+					if (path.Contains (n)) {
+						GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
+						obj.GetComponent<Renderer> ().material.color = Color.blue;
+					}
+				}
+			}
+		}
+	}
+
+	public void ClearPath(){
+		if (grid != null) {
+			Node playerNode = NodeFromWorldPoint (player.position);
+			foreach (Node n in grid) {
+				GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
+				obj.GetComponent<Renderer> ().material.color = Color.white;
+			}
+		}
+	}
+
+	void Update(){
+		CreateGrid ();
+	}
 
 	void Start(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-		CreateGrid ();
 	}
 
 	public int MaxSize{
@@ -34,14 +64,13 @@ public class GridScript : MonoBehaviour {
 			for (int y = 0; y < gridSizeY; y++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 				bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis,unwalkableMask));
-				GameObject go = GetDestructibleObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z));
+				GameObject go = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z),"Destructible");
 				bool des = (go == null) ? false : true;
 				grid [x, y] = new Node (walkable,des, worldPoint,x,y);
 			}
 		}
 	}
 
-	public List<Node> path;
 	void OnDrawGizmos(){
 		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
 
@@ -58,7 +87,6 @@ public class GridScript : MonoBehaviour {
 				if (path != null) {
 					if (path.Contains (n)) {
 						Gizmos.color = Color.black;
-						//Debug.Log(n.gridX + "," + n.gridY + " = " + n.gCost + "," + n.hCost + ","+n.fCost); 
 					}
 				}
 				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f));
@@ -68,7 +96,6 @@ public class GridScript : MonoBehaviour {
 
 	public List<Node> GetNeighbours(Node node){
 		List<Node> neighbours = new List<Node> ();
-		//Debug.Log ("(" + node.gridX + "," + node.gridY + ")");
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0) 
@@ -83,7 +110,6 @@ public class GridScript : MonoBehaviour {
 
 				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
 					neighbours.Add (grid [checkX, checkY]);
-					//Debug.Log ("("+checkX+","+checkY+") => " +  "("+grid [checkX, checkY].gridX+","+grid [checkX, checkY].gridY+")");
 				}
 			}
 		}
@@ -102,8 +128,8 @@ public class GridScript : MonoBehaviour {
 		return grid [x, y];
 	}
 
-	private GameObject GetDestructibleObjectByPosition(Vector3 position){
-		GameObject[] gameObjects = GameObject.FindGameObjectsWithTag ("Destructible");
+	private GameObject GetObjectByPosition(Vector3 position,string tag){
+		GameObject[] gameObjects = GameObject.FindGameObjectsWithTag (tag);
 		foreach (GameObject go in gameObjects) {
 			if (go.transform.position == position) {
 				return go;

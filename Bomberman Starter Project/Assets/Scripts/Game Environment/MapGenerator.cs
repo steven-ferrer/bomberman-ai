@@ -117,6 +117,7 @@ public class MapGenerator : MonoBehaviour {
 					}
 				}
 
+				newTile.tag = "Floor";
 				newTile.parent = transFloor;
 				transFloor.parent = mapHolder;
 			}
