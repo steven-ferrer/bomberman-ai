@@ -8,8 +8,8 @@ public class MapEditor : Editor {
 	{
 		base.OnInspectorGUI ();
 		MapGenerator map = target as MapGenerator;
-
-		//map.GenerateMap ();
-		//map.initializePlayerPosition ();
+		if (GUILayout.Button ("GENERATE MAP")) {
+			map.GenerateMap ();
+		}
 	}
 }

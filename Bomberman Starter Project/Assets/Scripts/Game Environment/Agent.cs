@@ -3,44 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Player : MonoBehaviour {
+public class Agent : MonoBehaviour {
 
 	public GlobalStateManager GlobalManager;
-
-    //Player parameters
-    [Range(1, 2)]
-    public int playerNumber = 1;
+	public GameObject bombPrefab;
     public float moveSpeed = 5f;
 	public int maxBomb = 3;
-	public GameObject bombPrefab;
 
+	private int agentIndex;
+	private string agentName;
 	private bool dead = false;
 	private int dropBomb = 0;
 	private List<Vector3> dropPositions;
-
-    //Cached components
     private Rigidbody rigidBody;
     private Transform myTransform;
-    private Animator animator;
+	private Animator animator;
 
     void Start() {
-        //Cache the attached components for better performance and less typing
         rigidBody = GetComponent<Rigidbody>();
 		dropPositions = new List<Vector3> ();
         myTransform = transform;
         animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
+		agentName = transform.name;
     }
 
-    // Update is called once per frame
 	void Update() {
 		animator.SetBool("Walking", false);
 	
-		switch (playerNumber) {
-		case 1:
+		switch (agentName) {
+		case "Player":
 			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
-			break;
-			case 2:
-			UpdateMovement(KeyCode.UpArrow,KeyCode.DownArrow,KeyCode.RightArrow,KeyCode.LeftArrow,KeyCode.Return);
+			UpdateMovement (KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
 			break;
 		}
     }
@@ -76,8 +69,8 @@ public class Player : MonoBehaviour {
     }
 
     private void DropBomb() {
-        if (bombPrefab) { //Check if bomb prefab is assigned first
-			bombPrefab.name = "P:" + playerNumber;
+        if (bombPrefab) { 
+			bombPrefab.name = "Agent:" + agentName;
 			checkDropBomb();
 			if (dropBomb < maxBomb) {
 				Vector3 dropPosition = new Vector3 (Mathf.RoundToInt (myTransform.position.x), bombPrefab.transform.position.y, Mathf.RoundToInt (myTransform.position.z));
@@ -98,7 +91,7 @@ public class Player : MonoBehaviour {
 			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
 			dropPositions.Clear ();
 			foreach (GameObject bomb in bombs) {
-				if (bomb.name == "P:" + playerNumber+"(Clone)") {
+				if (bomb.name == "Agent:" + agentName + "(Clone)") {
 					dropBomb++;
 					dropPositions.Add (bomb.transform.position);
 				}
@@ -109,14 +102,10 @@ public class Player : MonoBehaviour {
     public void OnTriggerEnter(Collider other) {
 		if(other.CompareTag ("Explosion")) {
 			dead = true; 
-			GlobalManager.PlayerDied (playerNumber); 
+			GlobalManager.PlayerDied (agentName); 
 			Destroy (gameObject); 
 		} 
 
     }
-		
-		
-
-
 
 }

@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Algorithms\AStar.cs">
     <Files>
-      <File FileName="Assets\Scripts\Algorithms\AStar.cs" Line="20" Column="3" />
-      <File FileName="Assets\Scripts\Game Environment\MapGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Game Environment\GlobalStateManager.cs" Line="22" Column="27" />
-      <File FileName="Assets\Scripts\Algorithms\GridScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Algorithms\PathRequestManager.cs" Line="31" Column="4" />
+      <File FileName="Assets\Scripts\Algorithms\AStar.cs" Line="87" Column="33" />
+      <File FileName="Assets\Scripts\Algorithms\Unit.cs" Line="54" Column="5" />
+      <File FileName="Assets\Scripts\Algorithms\GridScript.cs" Line="74" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

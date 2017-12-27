@@ -4,50 +4,19 @@ using UnityEngine;
 
 public class GridScript : MonoBehaviour {
 	
-	public Transform player;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
 	public float nodeRaduis;
-
-	public List<Node> path;
 
 	Node[,] grid;
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
-
-	public void UpdatePath(){
-		if (grid != null) {
-			Node playerNode = NodeFromWorldPoint (player.position);
-			foreach (Node n in grid) {
-				if (path != null) {
-					if (path.Contains (n)) {
-						GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
-						obj.GetComponent<Renderer> ().material.color = Color.blue;
-					}
-				}
-			}
-		}
-	}
-
-	public void ClearPath(){
-		if (grid != null) {
-			Node playerNode = NodeFromWorldPoint (player.position);
-			foreach (Node n in grid) {
-				GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
-				obj.GetComponent<Renderer> ().material.color = Color.white;
-			}
-		}
-	}
-
-	void Update(){
-		CreateGrid ();
-	}
-
-	void Start(){
+	void Awake(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+		CreateGrid ();
 	}
 
 	public int MaxSize{
@@ -67,29 +36,6 @@ public class GridScript : MonoBehaviour {
 				GameObject go = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z),"Destructible");
 				bool des = (go == null) ? false : true;
 				grid [x, y] = new Node (walkable,des, worldPoint,x,y);
-			}
-		}
-	}
-
-	void OnDrawGizmos(){
-		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
-
-		if (grid != null) {
-			Node playerNode = NodeFromWorldPoint (player.position);
-			foreach (Node n in grid) {
-				Gizmos.color = (n.walkable) ? Color.white : Color.red;
-				if (n.walkable == false && n.destructible == true) {
-					Gizmos.color = Color.blue;
-				}
-				if (n == playerNode) {
-					Gizmos.color = Color.cyan;
-				}
-				if (path != null) {
-					if (path.Contains (n)) {
-						Gizmos.color = Color.black;
-					}
-				}
-				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f));
 			}
 		}
 	}
@@ -137,4 +83,17 @@ public class GridScript : MonoBehaviour {
 		}
 		return null;
 	}
+
+	void OnDrawGizmos(){
+		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
+		if (grid != null) {
+			foreach (Node n in grid) {
+				Gizmos.color = (n.walkable) ? Color.white : Color.red;
+				if (n.walkable == false && n.destructible == true)
+					Gizmos.color = Color.blue;
+				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+			}
+		}
+	}
+
 }

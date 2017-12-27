@@ -1,0 +1,54 @@
+<MapGenerator>
+public void initializePlayerPosition(){
+		Vector3[] position = { 
+			new Vector3 { x = 4, y = 1, z = 8 }, 
+			new Vector3 { x = 4, y = 1, z = -8 }, 
+			new Vector3 { x = -4, y = 1, z = 8 }, 
+			new Vector3 { x = -4, y = 1, z = -8 } 
+		};
+
+		System.Random random = new System.Random ();
+		Vector3[] cornerPositions = Utility.ShuffleArray (position, random.Next(1,10));
+
+		for (int x = 0; x < players.Length; x++) {
+			players [x].transform.position = cornerPositions [x];
+			if (cornerPositions [x].x == 4) {
+				players [x].transform.localEulerAngles = new Vector3 (0, -90, 0);
+			} else {
+				players [x].transform.localEulerAngles = new Vector3 (0,90,0);
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+<GridScript>
+
+	/*public void UpdatePath(){
+		if (grid != null) {
+			Node playerNode = NodeFromWorldPoint (player.position);
+			foreach (Node n in grid) {
+				if (path != null) {
+					if (path.Contains (n)) {
+						GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
+						obj.GetComponent<Renderer> ().material.color = Color.blue;
+					}
+				}
+			}
+		}
+	}
+
+	public void ClearPath(){
+		if (grid != null) {
+			Node playerNode = NodeFromWorldPoint (player.position);
+			foreach (Node n in grid) {
+				GameObject obj = GetObjectByPosition (n.worldPosition, "Floor");
+				obj.GetComponent<Renderer> ().material.color = Color.white;
+			}
+		}
+	}*/

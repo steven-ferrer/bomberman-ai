@@ -3,24 +3,24 @@ using System.Collections;
 
 public class GlobalStateManager : MonoBehaviour {
 
-	private int deadPlayers = 0;
-	private int deadPlayerNumber = -1;
+	private int deadAgents = 0;
+	private string deadAgentName = null;
 
-    public void PlayerDied(int playerNumber) {
-		deadPlayers++; 
+    public void PlayerDied(string agentName) {
+		deadAgents++; 
 
-		if (deadPlayers == 1) { 
-			deadPlayerNumber = playerNumber; 
+		if (deadAgents == 1) { 
+			deadAgentName = agentName; 
 			Invoke("CheckPlayersDeath", .3f); 
 		}  
     }
 
 	void CheckPlayersDeath() {
-		if (deadPlayers == 1) { 
-			if (deadPlayerNumber == 1) { 
-				Debug.Log("Player 2 is the winner!");
+		if (deadAgents == 1) { 
+			if (deadAgentName == "Aggressive AI") { 
+				Debug.Log("Player is the winner!");
 			} else { 
-				Debug.Log("Player 1 is the winner!");
+				Debug.Log("Aggressive AI is the winner!");
 			}
 		} else { 
 			Debug.Log("The game ended in a draw!");

@@ -55,12 +55,14 @@
      <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
      <Compile Include="Assets\Scripts\Algorithms\Heap.cs" />
      <Compile Include="Assets\Scripts\Algorithms\Node.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\PathRequestManager.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\Unit.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\Agent.cs" />
      <Compile Include="Assets\Scripts\Game Environment\Bomb.cs" />
      <Compile Include="Assets\Scripts\Game Environment\DestroySelf.cs" />
      <Compile Include="Assets\Scripts\Game Environment\DisableTriggerOnPlayerExit.cs" />
      <Compile Include="Assets\Scripts\Game Environment\GlobalStateManager.cs" />
      <Compile Include="Assets\Scripts\Game Environment\MapGenerator.cs" />
-     <Compile Include="Assets\Scripts\Game Environment\Player.cs" />
      <Compile Include="Assets\Scripts\Utility.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

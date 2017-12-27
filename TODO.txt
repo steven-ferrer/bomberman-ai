@@ -23,3 +23,9 @@
 - Separate Destructible and Unwalkable wall (update) *
 - Converted Diagonal distance into Manhattan Distance (4 Direction) *
 - Optimized Pathfinding algorithm using Heap *
+- Visualization for Pathfinding *
+
+<Implementation of Aggressive & Defensive AI>
+- Container Behavior for AI's
+- Applying pathfinding for safezone
+- Implementation of Aggressive AI

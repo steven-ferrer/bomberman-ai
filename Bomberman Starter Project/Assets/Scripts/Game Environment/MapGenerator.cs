@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -11,7 +12,6 @@ public class MapGenerator : MonoBehaviour {
 	public Transform indestructibleWall;
 	public Transform outerWall;
 	public int wallCount = 50;
-	public GameObject[] players;
 
 	List<Coord> allTileCoords;
 	Queue<Coord> shuffledTileCoords;
@@ -26,30 +26,8 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
-	public void initializePlayerPosition(){
-		Vector3[] position = { 
-			new Vector3 { x = 4, y = 1, z = 8 }, 
-			new Vector3 { x = 4, y = 1, z = -8 }, 
-			new Vector3 { x = -4, y = 1, z = 8 }, 
-			new Vector3 { x = -4, y = 1, z = -8 } 
-		};
-
-		System.Random random = new System.Random ();
-		Vector3[] cornerPositions = Utility.ShuffleArray (position, random.Next(1,10));
-
-		for (int x = 0; x < players.Length; x++) {
-			players [x].transform.position = cornerPositions [x];
-			if (cornerPositions [x].x == 4) {
-				players [x].transform.localEulerAngles = new Vector3 (0, -90, 0);
-			} else {
-				players [x].transform.localEulerAngles = new Vector3 (0,90,0);
-			}
-		}
-	}
-
 	public void GenerateMap(){
-		
-		//Initialize Destructible Walls
+		//Initialize Random Destructible Position
 		allTileCoords = new List<Coord> ();
 		for (int x = 1; x < mapSize.x - 1; x++) {
 			for (int y = 1; y < mapSize.y - 1; y++) {
@@ -61,14 +39,9 @@ public class MapGenerator : MonoBehaviour {
 			}
 		}
 		System.Random rng = new System.Random ();
-		shuffledTileCoords = new Queue<Coord> (Utility.ShuffleArray (allTileCoords.ToArray (), rng.Next(1,100)));
-		//----------------------------------------------------------------------------------------------------------------------------------------//
+		shuffledTileCoords = new Queue<Coord> (Utility.ShuffleArray (allTileCoords.ToArray (), rng.Next(1,wallCount)));
 
-
-		//Holders Name
 		string strMap = "Generated Map";
-
-		//LayerName
 		string layerName = "Blocks";
 
 		if (transform.Find (strMap)) {

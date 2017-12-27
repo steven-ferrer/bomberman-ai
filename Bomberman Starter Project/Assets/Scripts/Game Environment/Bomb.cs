@@ -8,6 +8,7 @@ public class Bomb : MonoBehaviour {
 	public AudioClip soundExplosion;
 
 	public int bombRange = 3;
+	public float timeToExplode = 4f;
 
 	private bool exploded = false;
 	private bool chainReaction = false;
@@ -15,7 +16,7 @@ public class Bomb : MonoBehaviour {
 
 	void Start () {
 		audioSource = GetComponent<AudioSource> ();
-		Invoke("Explode", 4f);
+		Invoke("Explode", timeToExplode);
 	}
 
 	void Explode(){
