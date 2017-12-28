@@ -9,7 +9,16 @@ public class Unit : MonoBehaviour {
 	Vector3[] path;
 	int targetIndex;
 
+	private Animator animator;
+	private Rigidbody rigidBody;
+
 	void Start(){
+		animator = transform.Find("PlayerModel").GetComponent<Animator>();
+		rigidBody = GetComponent<Rigidbody>();
+	}
+
+	void Update(){
+		animator.SetBool("Walking", false);
 		PathRequestManager.RequestPath (new PathRequest(transform.position, target.position, OnPathFound));
 	}
 
@@ -23,9 +32,10 @@ public class Unit : MonoBehaviour {
 
 	IEnumerator FollowPath(){
 		Vector3 currentWaypoint = path [0];
+		Vector3 pos = transform.position;
 
 		while (true) {
-			if (transform.position == currentWaypoint) {
+			if (pos == currentWaypoint) {
 				targetIndex++;
 				if (targetIndex >= path.Length) {
 					yield break;
@@ -33,9 +43,42 @@ public class Unit : MonoBehaviour {
 				currentWaypoint = path [targetIndex];
 			}
 
-			transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
+			transform.position = Vector3.MoveTowards (pos, currentWaypoint, speed * Time.deltaTime);
+			UpdateAnimationMovement (pos,currentWaypoint);
+
 			yield return null;
 		}
+	}
+
+	void UpdateAnimationMovement(Vector3 currentPos, Vector3 nextPos){
+		currentPos.x = Mathf.RoundToInt (currentPos.x);
+		currentPos.z = Mathf.RoundToInt (currentPos.z);
+		nextPos.x = Mathf.RoundToInt (nextPos.x);
+		nextPos.z = Mathf.RoundToInt (nextPos.z);
+
+		if (currentPos == nextPos)
+			return;
+
+		if (nextPos.y == 1 && nextPos.z == currentPos.z) {
+			if (nextPos.x < currentPos.x) {
+				transform.rotation = Quaternion.Euler(0, 270, 0); //Up
+				animator.SetBool("Walking", true);
+			} else{
+				transform.rotation = Quaternion.Euler (0, 90, 0); //Down
+				animator.SetBool("Walking", true);
+			}
+		} 
+
+		if (nextPos.y == 1 && nextPos.x == currentPos.x) {
+			if (nextPos.z > currentPos.z) {
+				transform.rotation = Quaternion.Euler (0, 0, 0); //right
+				animator.SetBool("Walking", true);
+			} else {
+				transform.rotation = Quaternion.Euler(0, 180, 0); //left
+				animator.SetBool("Walking", true);
+			}
+		}
+
 	}
 
 	public void OnDrawGizmos(){

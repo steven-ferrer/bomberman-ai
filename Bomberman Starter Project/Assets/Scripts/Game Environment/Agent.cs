@@ -16,7 +16,6 @@ public class Agent : MonoBehaviour {
 	private int dropBomb = 0;
 	private List<Vector3> dropPositions;
     private Rigidbody rigidBody;
-    private Transform myTransform;
 	private Animator animator;
 
 	bool autoMoveUp = true;
@@ -25,8 +24,7 @@ public class Agent : MonoBehaviour {
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
 		dropPositions = new List<Vector3> ();
-        myTransform = transform;
-        animator = myTransform.Find("PlayerModel").GetComponent<Animator>();
+        animator = transform.Find("PlayerModel").GetComponent<Animator>();
 		agentName = transform.name;
     }
 
@@ -44,25 +42,25 @@ public class Agent : MonoBehaviour {
 	private void UpdateMovement(KeyCode up, KeyCode down, KeyCode right, KeyCode left, KeyCode dropBomb) {
 		if (Input.GetKey(up)) { //Up movement
 			rigidBody.velocity = new Vector3(-moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
-			myTransform.rotation = Quaternion.Euler(0, 270, 0);
+			transform.rotation = Quaternion.Euler(0, 270, 0);
 			animator.SetBool("Walking", true);
 		}
 
 		if (Input.GetKey(down)) { //Down movement
 			rigidBody.velocity = new Vector3(moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
-			myTransform.rotation = Quaternion.Euler(0, 90, 0);
+			transform.rotation = Quaternion.Euler(0, 90, 0);
 			animator.SetBool("Walking", true);
 		}
 
 		if (Input.GetKey(right)) { //Right movement
 			rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, moveSpeed);
-			myTransform.rotation = Quaternion.Euler(0, 0, 0);
+			transform.rotation = Quaternion.Euler(0, 0, 0);
 			animator.SetBool("Walking",true);
 		}
 
 		if (Input.GetKey(left)) { //Left movement
 			rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, -moveSpeed);
-			myTransform.rotation = Quaternion.Euler(0, 180, 0);
+			transform.rotation = Quaternion.Euler(0, 180, 0);
 			animator.SetBool("Walking", true);
 		}
 
@@ -76,7 +74,7 @@ public class Agent : MonoBehaviour {
 			bombPrefab.name = "Agent:" + agentName;
 			checkDropBomb();
 			if (dropBomb < maxBomb) {
-				Vector3 dropPosition = new Vector3 (Mathf.RoundToInt (myTransform.position.x), bombPrefab.transform.position.y, Mathf.RoundToInt (myTransform.position.z));
+				Vector3 dropPosition = new Vector3 (Mathf.RoundToInt (transform.position.x), bombPrefab.transform.position.y, Mathf.RoundToInt (transform.position.z));
 				foreach (Vector3 pos in dropPositions) {
 					if (dropPosition == pos) {
 						return;

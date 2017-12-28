@@ -16,7 +16,7 @@ public class GridScript : MonoBehaviour {
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-		CreateGrid ();
+		//CreateGrid ();
 	}
 
 	public int MaxSize{
@@ -25,7 +25,7 @@ public class GridScript : MonoBehaviour {
 		}
 	}
 
-	void CreateGrid(){
+	public void CreateGrid(){
 		grid = new Node[gridSizeX,gridSizeY];
 		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
 
