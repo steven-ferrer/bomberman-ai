@@ -1,13 +1,6 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Algorithms\AStar.cs">
-    <Files>
-      <File FileName="Assets\Scripts\Algorithms\PathRequestManager.cs" Line="31" Column="4" />
-      <File FileName="Assets\Scripts\Algorithms\AStar.cs" Line="87" Column="33" />
-      <File FileName="Assets\Scripts\Algorithms\Unit.cs" Line="54" Column="5" />
-      <File FileName="Assets\Scripts\Algorithms\GridScript.cs" Line="74" Column="22" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

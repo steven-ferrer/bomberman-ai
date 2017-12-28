@@ -19,6 +19,9 @@ public class Agent : MonoBehaviour {
     private Transform myTransform;
 	private Animator animator;
 
+	bool autoMoveUp = true;
+	bool autoMoveRight = false;
+
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
 		dropPositions = new List<Vector3> ();
