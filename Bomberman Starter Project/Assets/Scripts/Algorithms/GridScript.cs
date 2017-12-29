@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GridScript : MonoBehaviour {
 	
@@ -39,10 +40,10 @@ public class GridScript : MonoBehaviour {
 		}
 	}
 
-	public List<Node> GetNeighbours(Node node){
+	public List<Node> GetNeighbours(Node node,int range){
 		List<Node> neighbours = new List<Node> ();
-		for (int x = -1; x <= 1; x++) {
-			for (int y = -1; y <= 1; y++) {
+		for (int x = -range; x <= range; x++) {
+			for (int y = -range; y <= range; y++) {
 				if (x == 0 && y == 0) 
 					continue;
 				
@@ -60,29 +61,59 @@ public class GridScript : MonoBehaviour {
 		return neighbours;
 	}
 
-	public List<Node> GetBombExplosionRange(Node bombPosition){
+
+	private List<Node> explosionRange = new List<Node> ();
+
+	public List<Node> GetBombExplosionRange(Node node){
 		int range = 3;
-		List<Node> explosionRange = new List<Node> ();
+		List<Node> nodeList = GetNeighbours (node,range);
+		List<Node> left = new List<Node> ();
+		List<Node> right = new List<Node> ();
+		List<Node> down = new List<Node> ();
+		List<Node> up = new List<Node> ();
 
-		for (int x = -range; x <= range; x++) {
-			for (int y = -range; y <= range; y++) {
-				if (x == 0 && y == 0)
-					continue;
-
-				int checkX = bombPosition.gridX + x;
-				int checkY = bombPosition.gridY + y;
-
-				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
-					if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
-						if (grid [checkX, checkY].walkable)
-							explosionRange.Add (grid [checkX, checkY]);
-					}
+		foreach(Node n in nodeList) {
+			if (n.gridX == node.gridX) {
+				if (n.gridY < node.gridY) {
+					left.Add (n);
+				} else {
+					right.Add (n);
+				}
+			}
+			else if (n.gridY == node.gridY) {
+				if (n.gridX < node.gridX) {
+					up.Add (n);
+				} else {
+					down.Add (n);
 				}
 			}
 		}
-			
+
+		setExplosionRange (up, true);
+		setExplosionRange (down, false);
+		setExplosionRange (left, true);	
+		setExplosionRange (right, false);	
+
+		explosionRange.RemoveAll (s => s.walkable == false);
+
 		return explosionRange;
 	}
+
+	private void setExplosionRange(List<Node> node,bool isReverse){
+		if (isReverse)
+			node.Reverse ();
+		bool isWalk = false;
+		for (int x = 0; x < node.Count; x++) {
+			if (isWalk)
+				node [x].walkable = false;
+			if (!node [x].walkable)
+				isWalk = true;
+
+			explosionRange.Add (node [x]);
+		}
+	}
+
+	
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;

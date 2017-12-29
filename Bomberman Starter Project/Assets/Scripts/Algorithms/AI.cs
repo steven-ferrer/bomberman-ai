@@ -6,6 +6,7 @@ public class AI : MonoBehaviour {
 
 	public GridScript grid;
 	public float speed = 3;
+
 	private Animator animator;
 
 	Vector3[] path;
@@ -13,6 +14,7 @@ public class AI : MonoBehaviour {
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
+
 		grid.CreateGrid ();
 
 		Node aiNode = grid.NodeFromWorldPoint (transform.position);
