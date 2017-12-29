@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : MonoBehaviour {
+public class AI : MonoBehaviour {
 
+	public GridScript grid;
 	public Transform target;
 	public float speed = 3;
 	Vector3[] path;
 	int targetIndex;
 
 	private Animator animator;
-	private Rigidbody rigidBody;
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
-		rigidBody = GetComponent<Rigidbody>();
 	}
 
 	void Update(){
-		animator.SetBool("Walking", false);
-		PathRequestManager.RequestPath (new PathRequest(transform.position, target.position, OnPathFound));
+		if (target != null) {
+			animator.SetBool ("Walking", false);
+			grid.CreateGrid ();
+			PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
+		}
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){

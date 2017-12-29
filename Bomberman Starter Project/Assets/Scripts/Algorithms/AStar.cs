@@ -13,7 +13,6 @@ public class AStar : MonoBehaviour {
 	}
 
 	public void FindPath(PathRequest request,Action<PathResult> callback){
-		grid.CreateGrid ();
 		Stopwatch sw = new Stopwatch ();
 		sw.Start ();
 

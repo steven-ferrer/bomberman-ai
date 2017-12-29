@@ -12,14 +12,10 @@ public class Agent : MonoBehaviour {
 
 	private int agentIndex;
 	private string agentName;
-	private bool dead = false;
 	private int dropBomb = 0;
 	private List<Vector3> dropPositions;
     private Rigidbody rigidBody;
 	private Animator animator;
-
-	bool autoMoveUp = true;
-	bool autoMoveRight = false;
 
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
@@ -102,7 +98,6 @@ public class Agent : MonoBehaviour {
 		
     public void OnTriggerEnter(Collider other) {
 		if(other.CompareTag ("Explosion")) {
-			dead = true; 
 			GlobalManager.PlayerDied (agentName); 
 			Destroy (gameObject); 
 		} 
