@@ -5,23 +5,26 @@ using UnityEngine;
 public class AI : MonoBehaviour {
 
 	public GridScript grid;
-	public Transform target;
 	public float speed = 3;
+	private Animator animator;
+
 	Vector3[] path;
 	int targetIndex;
 
-	private Animator animator;
-
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
+		grid.CreateGrid ();
+
+		Node aiNode = grid.NodeFromWorldPoint (transform.position);
+		List<Node> neighbours = grid.GetBombExplosionRange (aiNode);
+
+		foreach(Node n in neighbours)
+			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + "walkable:"+n.walkable+" | destructible:" +n.destructible );  
 	}
 
 	void Update(){
-		if (target != null) {
-			animator.SetBool ("Walking", false);
-			grid.CreateGrid ();
-			PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
-		}
+		animator.SetBool ("Walking", false);
+		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){

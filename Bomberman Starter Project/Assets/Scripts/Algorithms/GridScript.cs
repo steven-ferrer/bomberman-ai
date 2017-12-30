@@ -16,7 +16,6 @@ public class GridScript : MonoBehaviour {
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-		//CreateGrid ();
 	}
 
 	public int MaxSize{
@@ -46,20 +45,43 @@ public class GridScript : MonoBehaviour {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0) 
 					continue;
-
-				//Update Neighbours only for left,right,up,down side (Manhattan Distance)
-				if ((x == -1 && y == -1) || (x == -1 && y == 1) || (x == 1 && y == -1) || (x == 1 && y == 1))
-					continue;
 				
 				int checkX = node.gridX + x;
 				int checkY = node.gridY + y;
 
 				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
-					neighbours.Add (grid [checkX, checkY]);
+					//Update Neighbours only for left,right,up,down side (Manhattan Distance)
+					if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
+						neighbours.Add (grid [checkX, checkY]);
+					}
 				}
 			}
 		}
 		return neighbours;
+	}
+
+	public List<Node> GetBombExplosionRange(Node bombPosition){
+		int range = 3;
+		List<Node> explosionRange = new List<Node> ();
+
+		for (int x = -range; x <= range; x++) {
+			for (int y = -range; y <= range; y++) {
+				if (x == 0 && y == 0)
+					continue;
+
+				int checkX = bombPosition.gridX + x;
+				int checkY = bombPosition.gridY + y;
+
+				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
+					if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
+						if (grid [checkX, checkY].walkable)
+							explosionRange.Add (grid [checkX, checkY]);
+					}
+				}
+			}
+		}
+			
+		return explosionRange;
 	}
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
