@@ -10,6 +10,7 @@ public class GridScript : MonoBehaviour {
 	public float nodeRaduis;
 
 	Node[,] grid;
+	Tree<int> tree;
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
@@ -38,10 +39,14 @@ public class GridScript : MonoBehaviour {
 				grid [x, y] = new Node (walkable,des, worldPoint,x,y);
 			}
 		}
+
 	}
+
+
 
 	public List<Node> GetNeighbours(Node node,int range){
 		List<Node> neighbours = new List<Node> ();
+
 		for (int x = -range; x <= range; x++) {
 			for (int y = -range; y <= range; y++) {
 				if (x == 0 && y == 0) 
@@ -58,62 +63,54 @@ public class GridScript : MonoBehaviour {
 				}
 			}
 		}
-		return neighbours;
-	}
-
-
-	private List<Node> explosionRange = new List<Node> ();
-
-	public List<Node> GetBombExplosionRange(Node node){
-		int range = 3;
-		List<Node> nodeList = GetNeighbours (node,range);
-		List<Node> left = new List<Node> ();
-		List<Node> right = new List<Node> ();
-		List<Node> down = new List<Node> ();
-		List<Node> up = new List<Node> ();
-
-		foreach(Node n in nodeList) {
+			
+		//Set directions
+		List<Node>[] directions = new List<Node>[4]; //left,right,up,down
+		for (int x = 0; x < directions.GetLength (0); x++)
+			directions [x] = new List<Node> ();
+		
+		foreach(Node n in neighbours) {
 			if (n.gridX == node.gridX) {
 				if (n.gridY < node.gridY) {
-					left.Add (n);
+					directions[0].Add (n); //left
 				} else {
-					right.Add (n);
+					directions[1].Add (n); //right ,reverse
 				}
 			}
 			else if (n.gridY == node.gridY) {
 				if (n.gridX < node.gridX) {
-					up.Add (n);
+					directions[2].Add (n); //up
 				} else {
-					down.Add (n);
+					directions[3].Add (n); //down , reverse
 				}
 			}
 		}
 
-		setExplosionRange (up, true);
-		setExplosionRange (down, false);
-		setExplosionRange (left, true);	
-		setExplosionRange (right, false);	
+		neighbours.Clear ();
 
-		explosionRange.RemoveAll (s => s.walkable == false);
+		//Eliminate walls (indestructible, destructible, and outerwall)
+		for (int x = 0; x < directions.GetLength (0); x++) {
+			if ((x % 2) == 0)
+			  directions [x].Reverse ();
 
-		return explosionRange;
-	}
+			bool isWalk = false;
+			for (int y = 0; y < directions [x].Count; y++) {
+				
+				if (isWalk)
+					directions [x][y].walkable = false;
+				if (!directions [x][y].walkable)
+					isWalk = true;
 
-	private void setExplosionRange(List<Node> node,bool isReverse){
-		if (isReverse)
-			node.Reverse ();
-		bool isWalk = false;
-		for (int x = 0; x < node.Count; x++) {
-			if (isWalk)
-				node [x].walkable = false;
-			if (!node [x].walkable)
-				isWalk = true;
-
-			explosionRange.Add (node [x]);
+				neighbours.Add (directions [x][y]);
+			}
 		}
+
+		neighbours.RemoveAll (s => s.walkable == false);
+
+		return neighbours;
 	}
 
-	
+
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;

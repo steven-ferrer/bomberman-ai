@@ -18,10 +18,11 @@ public class AI : MonoBehaviour {
 		grid.CreateGrid ();
 
 		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		List<Node> neighbours = grid.GetBombExplosionRange (aiNode);
+		//List<Node> neighbours = grid.GetNeighbours (aiNode,3);
 
-		foreach(Node n in neighbours)
-			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + "walkable:"+n.walkable+" | destructible:" +n.destructible );  
+
+
+
 	}
 
 	void Update(){
