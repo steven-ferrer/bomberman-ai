@@ -5,6 +5,7 @@ using UnityEngine;
 public class AI : MonoBehaviour {
 
 	public GridScript grid;
+	public Bomb bomb;
 	public float speed = 3;
 
 	private Animator animator;
@@ -12,22 +13,27 @@ public class AI : MonoBehaviour {
 	Vector3[] path;
 	int targetIndex;
 
+	List<Node> safeZone;
+
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
 
 		grid.CreateGrid ();
 
 		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		//List<Node> neighbours = grid.GetNeighbours (aiNode,3);
+		List<Node> range = grid.GetSafeZone (aiNode, bomb.bombRange);
 
+		foreach (Node n in range) {
+			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + n.walkable);
+		}
 
-
-
+		safeZone = range;
 	}
 
 	void Update(){
 		animator.SetBool ("Walking", false);
 		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
+
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
@@ -96,6 +102,14 @@ public class AI : MonoBehaviour {
 				Gizmos.DrawCube (path [i], Vector3.one);
 			}
 		}
+
+		if (safeZone != null) {
+			foreach (Node n in safeZone) {
+				Gizmos.color = Color.cyan;
+				Gizmos.DrawCube (n .worldPosition, Vector3.one);
+			}
+		}
+
 	}
 
 }

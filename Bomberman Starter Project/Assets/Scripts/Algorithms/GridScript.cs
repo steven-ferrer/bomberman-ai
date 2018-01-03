@@ -10,7 +10,7 @@ public class GridScript : MonoBehaviour {
 	public float nodeRaduis;
 
 	Node[,] grid;
-	Tree<int> tree;
+	Tree<Node> tree;
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
@@ -39,12 +39,17 @@ public class GridScript : MonoBehaviour {
 				grid [x, y] = new Node (walkable,des, worldPoint,x,y);
 			}
 		}
-
 	}
 
+	public List<Node> GetNeighbours(Node node){
+		return GetNeighbours (node, 1, false);
+	}
 
+	public List<Node> GetNeighbours(Node node, int range){
+		return GetNeighbours (node, range, false);
+	}
 
-	public List<Node> GetNeighbours(Node node,int range){
+	public List<Node> GetNeighbours(Node node,int range, bool diagonal){
 		List<Node> neighbours = new List<Node> ();
 
 		for (int x = -range; x <= range; x++) {
@@ -56,61 +61,85 @@ public class GridScript : MonoBehaviour {
 				int checkY = node.gridY + y;
 
 				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
-					//Update Neighbours only for left,right,up,down side (Manhattan Distance)
-					if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
+					if (diagonal == false) {
+						if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
+							neighbours.Add (grid [checkX, checkY]);
+						}
+					}else
 						neighbours.Add (grid [checkX, checkY]);
+				}
+			}
+		} 
+			
+		//Set directions
+		if (diagonal == false) {
+			List<Node>[] directions = new List<Node>[4]; //left,right,up,down
+			for (int x = 0; x < directions.GetLength (0); x++)
+				directions [x] = new List<Node> ();
+		
+			foreach (Node n in neighbours) {
+				if (n.gridX == node.gridX) {
+					if (n.gridY < node.gridY) {
+						directions [0].Add (n); //left
+					} else {
+						directions [1].Add (n); //right ,reverse
+					}
+				} else if (n.gridY == node.gridY) {
+					if (n.gridX < node.gridX) {
+						directions [2].Add (n); //up
+					} else {
+						directions [3].Add (n); //down , reverse
 					}
 				}
 			}
-		}
-			
-		//Set directions
-		List<Node>[] directions = new List<Node>[4]; //left,right,up,down
-		for (int x = 0; x < directions.GetLength (0); x++)
-			directions [x] = new List<Node> ();
-		
-		foreach(Node n in neighbours) {
-			if (n.gridX == node.gridX) {
-				if (n.gridY < node.gridY) {
-					directions[0].Add (n); //left
-				} else {
-					directions[1].Add (n); //right ,reverse
-				}
-			}
-			else if (n.gridY == node.gridY) {
-				if (n.gridX < node.gridX) {
-					directions[2].Add (n); //up
-				} else {
-					directions[3].Add (n); //down , reverse
-				}
-			}
-		}
 
-		neighbours.Clear ();
+			neighbours.Clear ();
 
-		//Eliminate walls (indestructible, destructible, and outerwall)
-		for (int x = 0; x < directions.GetLength (0); x++) {
-			if ((x % 2) == 0)
-			  directions [x].Reverse ();
+			//Eliminate walls (indestructible, destructible, and outerwall)
+			for (int x = 0; x < directions.GetLength (0); x++) {
+				if ((x % 2) == 0)
+					directions [x].Reverse ();
 
-			bool isWalk = false;
-			for (int y = 0; y < directions [x].Count; y++) {
+				bool isWalk = false;
+				for (int y = 0; y < directions [x].Count; y++) {
 				
-				if (isWalk)
-					directions [x][y].walkable = false;
-				if (!directions [x][y].walkable)
-					isWalk = true;
+					if (isWalk)
+						directions [x] [y].walkable = false;
+					if (!directions [x] [y].walkable)
+						isWalk = true;
 
-				neighbours.Add (directions [x][y]);
+					neighbours.Add (directions [x] [y]);
+				}
 			}
+
+			neighbours.RemoveAll (s => s.walkable == false);
 		}
 
-		neighbours.RemoveAll (s => s.walkable == false);
+
 
 		return neighbours;
 	}
 
 
+	public List<Node> GetSafeZone(Node node,int range){
+		List<Node> bombRange = GetNeighbours (node, range);
+		int i = 1;
+
+		List<Node> zoneArea = new List<Node> ();
+		List<Node> safeZone = new List<Node> ();
+
+		while (safeZone.Count < 1) {
+			zoneArea = GetNeighbours (node, range + i, true);
+			safeZone = new List<Node> (zoneArea);
+
+			safeZone.RemoveAll (x => bombRange.Contains (x));
+			safeZone.RemoveAll (s => s.walkable == false);
+
+			i++;
+		}
+
+		return safeZone;
+	}
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;

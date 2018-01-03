@@ -79,8 +79,6 @@ public class Tree<T> {
 		if (this.root == null) {
 			return;
 		}
-			
-		Debug.Log(spaces + root.Value);
 
 		TreeNode<T> child = null;
 		for (int i = 0; i < root.ChildrenCount; i++) {

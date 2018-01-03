@@ -38,7 +38,7 @@ public class AStar : MonoBehaviour {
 					break;
 				}
 
-				foreach (Node neighbour in grid.GetNeighbours(currentNode,1)) {
+				foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
 					if (closedSet.Contains (neighbour)) {
 						continue;
 					}
