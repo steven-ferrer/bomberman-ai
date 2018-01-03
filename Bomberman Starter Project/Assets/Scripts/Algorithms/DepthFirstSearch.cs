@@ -10,12 +10,10 @@ public class DepthFirstSearch : MonoBehaviour {
 		grid = GetComponent<GridScript> ();
 	}
 
-	public void Search(Node startNode){
-		//Initialize
-		HashSet<Node> visitedNodes = new HashSet<Node> ();
+	public List<Node> Search(Node startNode){
+		List<Node> visitedNodes = new List<Node> ();
 		Stack<Node> stack = new Stack<Node> ();
 
-		//Initial node
 		stack.Push (startNode); 
 
 		while (stack.Count > 0) {
@@ -26,20 +24,14 @@ public class DepthFirstSearch : MonoBehaviour {
 
 				List<Node> neighbours = grid.GetNeighbours (node);
 				foreach (Node n in neighbours) {
+					Debug.Log (n.walkable + " ");
 					if (!visitedNodes.Contains (n)) {
 						stack.Push (n);
 					}
 				}
 			}
 		}
-
-
-		foreach (Node n in visitedNodes) {
-			Debug.Log (n.gridX + "," + n.gridY);
-		}
+		return visitedNodes;
 	}
-
-
-
 
 }

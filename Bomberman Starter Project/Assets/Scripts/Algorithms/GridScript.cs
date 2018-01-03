@@ -13,13 +13,10 @@ public class GridScript : MonoBehaviour {
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
-	DepthFirstSearch dfs;
-
 	void Awake(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-		dfs = GetComponent<DepthFirstSearch> ();
 	}
 
 	public int MaxSize{
@@ -43,8 +40,6 @@ public class GridScript : MonoBehaviour {
 				grid [x, y] = n;
 			}
 		}
-
-		Dfs ();
 	}
 
 	public List<Node> GetNeighbours(Node node){
@@ -120,37 +115,9 @@ public class GridScript : MonoBehaviour {
 
 			neighbours.RemoveAll (s => s.walkable == false);
 		}
-
-
-
 		return neighbours;
 	}
-
-	public List<Node> GetSafeZone(Node node,int range){
-		List<Node> bombRange = GetNeighbours (node, range);
-		int i = 1;
-
-		List<Node> zoneArea = new List<Node> ();
-		List<Node> safeZone = new List<Node> ();
-
-		while (safeZone.Count < 1) {
-			zoneArea = GetNeighbours (node, range + i, true);
-			safeZone = new List<Node> (zoneArea);
-
-			safeZone.RemoveAll (x => bombRange.Contains (x));
-			safeZone.RemoveAll (s => s.walkable == false);
-
-			i++;
-		}
-
-		return safeZone;
-	}
 		
-	public void Dfs(){
-		dfs.Search (grid [1, 1]);
-
-	}
-
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
 		float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;

@@ -5,35 +5,24 @@ using UnityEngine;
 public class AI : MonoBehaviour {
 
 	public GridScript grid;
+	public DepthFirstSearch dfs;
 	public Bomb bomb;
 	public float speed = 3;
 
 	private Animator animator;
 
 	Vector3[] path;
+	List<Node> walkableNodes;
 	int targetIndex;
-
-	List<Node> safeZone;
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
-
-		grid.CreateGrid ();
-
-//		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-//		List<Node> range = grid.GetSafeZone (aiNode, bomb.bombRange);
-//
-//		foreach (Node n in range) {
-//			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + n.walkable);
-//		}
-//
-//		safeZone = range;
 	}
 
 	void Update(){
 		animator.SetBool ("Walking", false);
 		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
-
+		grid.CreateGrid();
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
@@ -102,11 +91,10 @@ public class AI : MonoBehaviour {
 				Gizmos.DrawCube (path [i], Vector3.one);
 			}
 		}
-
-		if (safeZone != null) {
-			foreach (Node n in safeZone) {
+		if (walkableNodes != null) {
+			foreach(Node n in walkableNodes){
 				Gizmos.color = Color.cyan;
-				Gizmos.DrawCube (n .worldPosition, Vector3.one);
+				Gizmos.DrawCube (n.worldPosition, Vector3.one);
 			}
 		}
 

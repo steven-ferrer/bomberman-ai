@@ -29,8 +29,10 @@ public class Agent : MonoBehaviour {
 	
 		switch (agentName) {
 		case "Player":
-			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
 			UpdateMovement (KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
+			break;
+		case "Aggressive AI":
+			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
 			break;
 		}
     }

@@ -2,9 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Algorithms\DepthFirstSearch.cs">
     <Files>
-      <File FileName="Assets\Scripts\Algorithms\GridScript.cs" Line="150" Column="3" />
-      <File FileName="Assets\Scripts\Algorithms\DepthFirstSearch.cs" Line="21" Column="28" />
-      <File FileName="Assets\Scripts\Algorithms\AStar.cs" Line="11" Column="15" />
+      <File FileName="Assets\Scripts\Algorithms\DepthFirstSearch.cs" Line="33" Column="4" />
+      <File FileName="Assets\Scripts\Algorithms\AI.cs" Line="25" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
