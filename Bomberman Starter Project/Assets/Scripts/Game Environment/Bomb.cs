@@ -12,11 +12,22 @@ public class Bomb : MonoBehaviour {
 
 	private bool exploded = false;
 	private bool chainReaction = false;
+	private float timeBomb;
 	AudioSource audioSource;
 
 	void Start () {
 		audioSource = GetComponent<AudioSource> ();
+		timeBomb = timeToExplode;
+		InvokeRepeating ("CountDown", 1.0f, 1.0f);
 		Invoke("Explode", timeToExplode);
+	}
+
+	void CountDown(){
+		timeBomb = timeBomb - 1f;
+	}
+
+	public float getTimeBomb(){
+		return timeBomb;
 	}
 
 	void Explode(){

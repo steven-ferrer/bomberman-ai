@@ -24,7 +24,8 @@ public class DepthFirstSearch : MonoBehaviour {
 
 				List<Node> neighbours = grid.GetNeighbours (node);
 				foreach (Node n in neighbours) {
-					Debug.Log (n.walkable + " ");
+					if(n.isBomb == true)
+						Debug.Log (n.isBomb + "("+n.timeOfBomb+") => (" + n.gridX+","+n.gridY+")" );
 					if (!visitedNodes.Contains (n)) {
 						stack.Push (n);
 					}
@@ -33,5 +34,7 @@ public class DepthFirstSearch : MonoBehaviour {
 		}
 		return visitedNodes;
 	}
+
+
 
 }

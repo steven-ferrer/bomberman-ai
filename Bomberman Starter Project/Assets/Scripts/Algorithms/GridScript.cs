@@ -47,6 +47,9 @@ public class GridScript : MonoBehaviour {
 				Node n = new Node (walkable,isDestructibleWall, worldPoint,x,y);
 				n.setBomb (isBomb);
 				n.setAgent (isAgent);
+				if (isBomb) {
+					n.setTimeBomb (goBomb.GetComponent<Bomb> ().getTimeBomb ());
+				}
 				n.HeapIndex = index++;
 
 				grid [x, y] = n;

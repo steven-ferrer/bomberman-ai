@@ -16,7 +16,7 @@ public class Node : IHeapItem<Node> {
 
 	public bool isAgent = false;
 	public bool isBomb = false;
-	public int timeOfBomb = 0;
+	public float timeOfBomb = -1f;
 
 	public Node(bool walkable,bool destructible, Vector3 worldPosition,int gridX, int gridY){
 		this.walkable = walkable;
@@ -30,6 +30,10 @@ public class Node : IHeapItem<Node> {
 		this.isBomb = isBomb;
 		if (isBomb)
 			this.isAgent = false;
+	}
+
+	public void setTimeBomb(float timeOfBomb){
+		this.timeOfBomb = timeOfBomb;
 	}
 
 	public void setAgent(bool isAgent){

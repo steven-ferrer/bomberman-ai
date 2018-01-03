@@ -23,6 +23,8 @@ public class AI : MonoBehaviour {
 		animator.SetBool ("Walking", false);
 		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
 		grid.CreateGrid();
+		Node aiNode = grid.NodeFromWorldPoint (transform.position);
+		walkableNodes = dfs.Search (aiNode);
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
