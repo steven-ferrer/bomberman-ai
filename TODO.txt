@@ -27,6 +27,7 @@
 - Follow Path *
 
 <Implementation of Aggressive & Defensive AI>
-- Container Behavior for AI's
-- Applying pathfinding for safezone
-- Implementation of Aggressive AI
+(Minor bugs):
+	- worldPoint position (can't detect when in the between)
+- Applying pathfinding for safezone *
+- Implementation of Aggressive AI 

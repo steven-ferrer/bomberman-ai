@@ -6,6 +6,7 @@ using System.Linq;
 public class GridScript : MonoBehaviour {
 	
 	public LayerMask unwalkableMask;
+	public LayerMask playerCollisionMask;
 	public Vector2 gridWorldSize;
 	public float nodeRaduis;
 
@@ -31,12 +32,23 @@ public class GridScript : MonoBehaviour {
 		int index = 0;
 		for (int x = 0; x < gridSizeX; x++) {
 			for (int y = 0; y < gridSizeY; y++) {
+
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 				bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis,unwalkableMask));
-				GameObject go = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z),"Destructible");
-				bool des = (go == null) ? false : true;
-				Node n = new Node (walkable,des, worldPoint,x,y);
+				bool isAgent = (Physics.CheckSphere (worldPoint, nodeRaduis,playerCollisionMask));
+				Vector3 pos = new Vector3 (worldPoint.x, 1, worldPoint.z);
+
+				GameObject goDes = GetObjectByPosition (pos,"Destructible");
+				GameObject goBomb = GetObjectByPosition (pos, "Bomb");
+
+				bool isBomb = (goBomb == null) ? false : true;
+				bool isDestructibleWall = (goDes == null) ? false : true;
+
+				Node n = new Node (walkable,isDestructibleWall, worldPoint,x,y);
+				n.setBomb (isBomb);
+				n.setAgent (isAgent);
 				n.HeapIndex = index++;
+
 				grid [x, y] = n;
 			}
 		}
@@ -141,13 +153,18 @@ public class GridScript : MonoBehaviour {
 	}
 
 	void OnDrawGizmos(){
-		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
+		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 2, gridWorldSize.y));
 		if (grid != null) {
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable) ? Color.white : Color.red;
 				if (n.walkable == false && n.destructible == true)
 					Gizmos.color = Color.blue;
-				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				if (n.isBomb == true)
+					Gizmos.color = Color.grey;
+				if (n.isAgent == true)
+					Gizmos.color = Color.green;
+				
+				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f) );
 			}
 		}
 	}

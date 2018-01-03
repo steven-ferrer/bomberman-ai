@@ -14,12 +14,26 @@ public class Node : IHeapItem<Node> {
 	public Node parent;
 	int heapIndex;
 
+	public bool isAgent = false;
+	public bool isBomb = false;
+	public int timeOfBomb = 0;
+
 	public Node(bool walkable,bool destructible, Vector3 worldPosition,int gridX, int gridY){
 		this.walkable = walkable;
 		this.destructible = destructible;
 		this.worldPosition = worldPosition;
 		this.gridX = gridX;
 		this.gridY = gridY;
+	}
+
+	public void setBomb(bool isBomb){
+		this.isBomb = isBomb;
+		if (isBomb)
+			this.isAgent = false;
+	}
+
+	public void setAgent(bool isAgent){
+		this.isAgent = isAgent;
 	}
 		
 	public int fCost{
