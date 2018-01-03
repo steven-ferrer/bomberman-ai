@@ -20,14 +20,14 @@ public class AI : MonoBehaviour {
 
 		grid.CreateGrid ();
 
-		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		List<Node> range = grid.GetSafeZone (aiNode, bomb.bombRange);
-
-		foreach (Node n in range) {
-			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + n.walkable);
-		}
-
-		safeZone = range;
+//		Node aiNode = grid.NodeFromWorldPoint (transform.position);
+//		List<Node> range = grid.GetSafeZone (aiNode, bomb.bombRange);
+//
+//		foreach (Node n in range) {
+//			Debug.Log ("(" + n.gridX + "," + n.gridY + ") => " + n.walkable);
+//		}
+//
+//		safeZone = range;
 	}
 
 	void Update(){

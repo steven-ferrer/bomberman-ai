@@ -10,14 +10,16 @@ public class GridScript : MonoBehaviour {
 	public float nodeRaduis;
 
 	Node[,] grid;
-	Tree<Node> tree;
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
+
+	DepthFirstSearch dfs;
 
 	void Awake(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+		dfs = GetComponent<DepthFirstSearch> ();
 	}
 
 	public int MaxSize{
@@ -29,16 +31,20 @@ public class GridScript : MonoBehaviour {
 	public void CreateGrid(){
 		grid = new Node[gridSizeX,gridSizeY];
 		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
-
+		int index = 0;
 		for (int x = 0; x < gridSizeX; x++) {
 			for (int y = 0; y < gridSizeY; y++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 				bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis,unwalkableMask));
 				GameObject go = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z),"Destructible");
 				bool des = (go == null) ? false : true;
-				grid [x, y] = new Node (walkable,des, worldPoint,x,y);
+				Node n = new Node (walkable,des, worldPoint,x,y);
+				n.HeapIndex = index++;
+				grid [x, y] = n;
 			}
 		}
+
+		Dfs ();
 	}
 
 	public List<Node> GetNeighbours(Node node){
@@ -120,7 +126,6 @@ public class GridScript : MonoBehaviour {
 		return neighbours;
 	}
 
-
 	public List<Node> GetSafeZone(Node node,int range){
 		List<Node> bombRange = GetNeighbours (node, range);
 		int i = 1;
@@ -139,6 +144,11 @@ public class GridScript : MonoBehaviour {
 		}
 
 		return safeZone;
+	}
+		
+	public void Dfs(){
+		dfs.Search (grid [1, 1]);
+
 	}
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
@@ -174,5 +184,4 @@ public class GridScript : MonoBehaviour {
 			}
 		}
 	}
-
 }
