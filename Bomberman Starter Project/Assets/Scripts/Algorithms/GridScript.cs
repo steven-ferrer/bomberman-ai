@@ -59,8 +59,9 @@ public class GridScript : MonoBehaviour {
 					bool isBomb = (goBomb == null) ? false : true;
 
 					Node n = new Node (walkable, isDestructibleWall, worldPoint, x, y);
-					if (isBomb)
+					if (isBomb) {
 						n.setBomb (isBomb);
+					}
 					n.HeapIndex = index++;
 					grid [x, y] = n;
 				}
@@ -87,6 +88,7 @@ public class GridScript : MonoBehaviour {
 			foreach (Vector3 pos in Bomb.droppedBombs) {
 				Node wall = NodeFromWorldPoint (pos);
 				grid [wall.gridX, wall.gridY].setBomb (true);
+				grid [wall.gridX, wall.gridY].walkable = false;
 			}
 			Bomb.droppedBombs.Clear ();
 		}
@@ -223,7 +225,7 @@ public class GridScript : MonoBehaviour {
 				Gizmos.color = (n.walkable) ? Color.white : Color.red;
 				if (n.walkable == false && n.destructible == true)
 					Gizmos.color = Color.blue;
-				if (n.isBomb == true)
+				if (n.isBomb == true && n.walkable == false)
 					Gizmos.color = Color.grey;
 				if (n.isAgent == true)
 					Gizmos.color = Color.green;

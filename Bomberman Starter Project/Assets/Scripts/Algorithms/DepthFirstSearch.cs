@@ -20,50 +20,76 @@ public class DepthFirstSearch : MonoBehaviour {
 		bombRange = bombScript.bombRange;
 	}
 
-	public void Search(Node startNode){
-		if (search == true) {
-			List<Node> visitedNodes = new List<Node> ();
-			Stack<Node> stack = new Stack<Node> ();
+	private List<Node> GetSearchResult(Node startNode){
+		List<Node> visitedNodes = new List<Node> ();
+		Stack<Node> stack = new Stack<Node> ();
 
-			stack.Push (startNode); 
+		stack.Push (startNode); 
 
-			while (stack.Count > 0) {
-				Node node = stack.Pop ();
+		while (stack.Count > 0) {
+			Node node = stack.Pop ();
 
-				if (!visitedNodes.Contains (node)) {
-					visitedNodes.Add (node);
+			if (!visitedNodes.Contains (node)) {
+				visitedNodes.Add (node);
 
-					List<Node> neighbours = grid.GetNeighbours (node);
-					foreach (Node n in neighbours) {
-						if (!visitedNodes.Contains (n)) {
-							stack.Push (n);
-						}
+				List<Node> neighbours = grid.GetNeighbours (node);
+				foreach (Node n in neighbours) {
+					if (!visitedNodes.Contains (n)) {
+						stack.Push (n);
 					}
 				}
 			}
+		}
+		return visitedNodes;
+	}
+
+
+	public void Search(Node startNode){
+		if (search == true) {
+			List<Node> visitedNodes = GetSearchResult (startNode);
 
 			if (visitedNodes.Any (v => v.isBomb == true)) {
-				List<Node> bombs = visitedNodes.Where (b => b.isBomb == true).ToList();
-				Debug.Log ("Bomb Found: " +bombs.Count());
-				AvoidBombs (startNode, bombs);
+				List<Node> bombs = visitedNodes.Where (b => b.isBomb == true).ToList ();
+				AvoidBombs (startNode, bombs,visitedNodes);
 				search = false;
 			}
+
 		}
 	}
 
-	private void AvoidBombs(Node aiNode,List<Node> bombs){
+
+	private void AvoidBombs(Node aiNode,List<Node> bombs,List<Node> visitedNodes){
 		List<Node> rangeOfBombs = new List<Node> (); 
 
 		foreach (Node n in bombs) {
+			n.walkable = false;
 			List<Node> rangeOfBomb = grid.GetNeighbours (n, bombRange);
+			rangeOfBomb.Add (n);
 			rangeOfBombs.AddRange (rangeOfBomb);
 		}
-	
-//		List<Node> safeZone = GetSearchResult (aiNode);
-//		safeZone.RemoveAll(x => rangeOfBomb.Contains(x));
 
-		safeZones = rangeOfBombs;
+		//List<Node> safeZone = GetSearchResult (aiNode);
+		visitedNodes.RemoveAll(x => rangeOfBombs.Contains(x));
+		safeZones = visitedNodes;
+
+		//find path according to waypoints. lowest to highest
+			foreach(Node n in visitedNodes)
+				PathRequestManager.RequestPath (new PathRequest (aiNode.worldPosition, n.worldPosition, OnPathFound));
+		
 	}
+
+
+	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
+		if (pathSuccessful) {
+//			path = newPath;
+//			StopCoroutine ("FollowPath");
+//			StartCoroutine ("FollowPath");
+			//Debug.Log("Path was successfully found");
+		}
+	}
+
+
+
 	
 
 }
