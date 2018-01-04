@@ -6,6 +6,7 @@ using System;
 public class Agent : MonoBehaviour {
 
 	public GlobalStateManager GlobalManager;
+	public GridScript grid;
 	public GameObject bombPrefab;
     public float moveSpeed = 5f;
 	public int maxBomb = 3;
@@ -19,6 +20,9 @@ public class Agent : MonoBehaviour {
 
 	bool walking = false;
 
+	Vector3 currentPos;
+	Vector3 nextPos;
+
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
 		dropPositions = new List<Vector3> ();
@@ -31,7 +35,15 @@ public class Agent : MonoBehaviour {
 			walking = false;
 			animator.SetBool ("Walking", walking);
 		}
-	
+
+		currentPos = transform.position;
+
+		if (Utility.RoundToInt (currentPos) != Utility.RoundToInt (nextPos)) { 
+			grid.UpdateAgentMoves (currentPos,nextPos);
+			nextPos = currentPos;
+		}
+			
+
 		switch (agentName) {
 		case "Player":
 			UpdateMovement (KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
@@ -81,13 +93,14 @@ public class Agent : MonoBehaviour {
 			bombPrefab.name = "Agent:" + agentName;
 			checkDropBomb();
 			if (dropBomb < maxBomb) {
-				Vector3 dropPosition = new Vector3 (Mathf.RoundToInt (transform.position.x), bombPrefab.transform.position.y, Mathf.RoundToInt (transform.position.z));
+				Vector3 dropPosition = Utility.RoundToInt(transform.position);
 				foreach (Vector3 pos in dropPositions) {
 					if (dropPosition == pos) {
 						return;
 					}
 				}
 				Instantiate (bombPrefab, dropPosition, bombPrefab.transform.rotation);
+				Bomb.droppedBombs.Add (dropPosition);
 			}
 			dropBomb = 0;
         }

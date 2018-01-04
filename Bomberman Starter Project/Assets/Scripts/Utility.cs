@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 public static class Utility{
 
@@ -13,6 +14,10 @@ public static class Utility{
 			array [x] = tempItem;
 		}
 		return array;
+	}
+
+	public static Vector3 RoundToInt(Vector3 vector){
+		return new Vector3(Mathf.Round(vector.x), Mathf.Round(vector.y), Mathf.Round(vector.z));
 	}
 
 }

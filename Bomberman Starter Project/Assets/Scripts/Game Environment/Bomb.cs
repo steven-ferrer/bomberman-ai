@@ -16,6 +16,8 @@ public class Bomb : MonoBehaviour {
 	AudioSource audioSource;
 
 	public static List<Vector3> wallTobeDestroy = new List<Vector3>();
+	public static List<Vector3> droppedBombs = new List<Vector3> ();
+	public static List<Vector3> explodedBombs = new List<Vector3> ();
 
 	void Start () {
 		audioSource = GetComponent<AudioSource> ();
@@ -35,7 +37,7 @@ public class Bomb : MonoBehaviour {
 	void Explode(){
 		Instantiate(explosionPrefab, transform.position, Quaternion.identity); 
 		if (chainReaction == false) {
-			//audioSource.PlayOneShot (soundExplosion, 0.7F);
+			audioSource.PlayOneShot (soundExplosion, 0.7F);
 			chainReaction = true;
 		}
 		StartCoroutine(CreateExplosions(Vector3.forward));
@@ -47,6 +49,7 @@ public class Bomb : MonoBehaviour {
 		exploded = true;
 		transform.Find("Collider").gameObject.SetActive(false); 
 		Destroy(gameObject, .4f); 
+		Bomb.explodedBombs.Add (transform.position);
 	}
 
 	private IEnumerator CreateExplosions(Vector3 direction) {
@@ -63,7 +66,6 @@ public class Bomb : MonoBehaviour {
 				}
 				break; 
 			}
-
 			yield return new WaitForSeconds (.05f);
 		}
 	}

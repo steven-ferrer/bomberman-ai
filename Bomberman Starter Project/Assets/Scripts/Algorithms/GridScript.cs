@@ -26,6 +26,7 @@ public class GridScript : MonoBehaviour {
 	void Update(){
 		if (isCreated == true) {
 			UpdateWalls ();
+			UpdateBombs ();
 		}
 	}
 
@@ -66,7 +67,7 @@ public class GridScript : MonoBehaviour {
 			print ("Grid is already Created");
 	}
 
-	public void UpdateWalls(){
+	private void UpdateWalls(){
 		if (Bomb.wallTobeDestroy.Count > 0) {
 			foreach (Vector3 pos in Bomb.wallTobeDestroy) {
 				Node wall = NodeFromWorldPoint (pos);
@@ -74,6 +75,36 @@ public class GridScript : MonoBehaviour {
 				grid [wall.gridX, wall.gridY].destructible = false;
 			}
 			Bomb.wallTobeDestroy.Clear ();
+		}
+	}
+
+	private void UpdateBombs(){
+		if (Bomb.droppedBombs.Count > 0) {
+			foreach (Vector3 pos in Bomb.droppedBombs) {
+				Node wall = NodeFromWorldPoint (pos);
+				grid [wall.gridX, wall.gridY].setBomb (true);
+			}
+			Bomb.droppedBombs.Clear ();
+		}
+
+		if (Bomb.explodedBombs.Count > 0) {
+			foreach (Vector3 pos in Bomb.explodedBombs) {
+				Node wall = NodeFromWorldPoint (pos);
+				grid [wall.gridX, wall.gridY].setBomb (false);
+			}
+			Bomb.explodedBombs.Clear ();
+		}
+	}
+
+	public void UpdateAgentMoves(Vector3 current, Vector3 next){
+		Node currentNode = NodeFromWorldPoint (Utility.RoundToInt(current));
+		Node nextNode = NodeFromWorldPoint (Utility.RoundToInt(next));
+
+		if (next == Vector3.zero) {
+			grid [currentNode.gridX, currentNode.gridY].setAgent (true);
+		} else {
+			grid [currentNode.gridX, currentNode.gridY].setAgent (true);
+			grid [nextNode.gridX, nextNode.gridY].setAgent (false);
 		}
 	}
 
