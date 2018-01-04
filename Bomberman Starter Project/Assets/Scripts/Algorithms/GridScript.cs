@@ -65,13 +65,13 @@ public class GridScript : MonoBehaviour {
 		return GetNeighbours (node, range, false);
 	}
 
-	public List<Node> GetNeighbours(Node node,int range, bool diagonal){
+	public List<Node> GetNeighbours(Node node,int range,bool diagonal){
 		List<Node> neighbours = new List<Node> ();
 
 		for (int x = -range; x <= range; x++) {
 			for (int y = -range; y <= range; y++) {
-				if (x == 0 && y == 0) 
-					continue;
+				if (x == 0 && y == 0)
+						continue;
 				
 				int checkX = node.gridX + x;
 				int checkY = node.gridY + y;
@@ -133,6 +133,9 @@ public class GridScript : MonoBehaviour {
 		return neighbours;
 	}
 		
+
+
+
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
 		float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;

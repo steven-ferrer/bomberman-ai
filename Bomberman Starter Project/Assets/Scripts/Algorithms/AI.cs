@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class AI : MonoBehaviour {
 
 	public GridScript grid;
 	public DepthFirstSearch dfs;
-	public Bomb bomb;
 	public float speed = 3;
 
 	private Animator animator;
@@ -15,16 +15,22 @@ public class AI : MonoBehaviour {
 	List<Node> walkableNodes;
 	int targetIndex;
 
+	Node[,] recentGrid;
+
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
 	}
+		
 
 	void Update(){
-		animator.SetBool ("Walking", false);
+		animator.SetBool ("Walking", false);	
+		grid.CreateGrid ();
 		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
-		grid.CreateGrid();
 		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		walkableNodes = dfs.Search (aiNode);
+		dfs.Search (aiNode);
+		if (dfs.search == false) {
+		walkableNodes = dfs.safeZones;
+		}
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
