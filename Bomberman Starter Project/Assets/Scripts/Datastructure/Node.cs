@@ -18,6 +18,8 @@ public class Node : IHeapItem<Node> {
 	public bool isBomb = false;
 	public float timeOfBomb = -1f;
 
+	public bool isBombRange;
+
 	public Node(bool walkable,bool destructible, Vector3 worldPosition,int gridX, int gridY){
 		this.walkable = walkable;
 		this.destructible = destructible;

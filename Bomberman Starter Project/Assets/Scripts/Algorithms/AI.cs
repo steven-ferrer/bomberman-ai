@@ -14,7 +14,9 @@ public class AI : MonoBehaviour {
 	private Animator animator;
 
 	Vector3[] path;
+	List<Node> allSearch;
 	int targetIndex;
+	Node aiNode;
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
@@ -26,6 +28,10 @@ public class AI : MonoBehaviour {
 			walking = false;
 			animator.SetBool ("Walking", walking);	
 		}
+
+		aiNode = grid.NodeFromWorldPoint (transform.position);
+		dfs.Search (aiNode);
+		allSearch = dfs.safeZones;
 
 		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
 	}
@@ -98,6 +104,13 @@ public class AI : MonoBehaviour {
 			for (int i = targetIndex; i < path.Length; i++) {
 				Gizmos.color = Color.black;
 				Gizmos.DrawCube (path [i], Vector3.one);
+			}
+		}
+
+		if (allSearch != null) {
+			foreach (Node n in allSearch) {
+				Gizmos.color = Color.cyan;
+				Gizmos.DrawCube (n.worldPosition, Vector3.one);
 			}
 		}
 	}

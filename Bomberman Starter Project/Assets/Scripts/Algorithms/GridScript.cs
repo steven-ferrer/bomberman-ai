@@ -53,10 +53,14 @@ public class GridScript : MonoBehaviour {
 					Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 					bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis, unwalkableMask));
 					GameObject goDes = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), "Destructible");
+					GameObject goBomb = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), "Bomb");
 
 					bool isDestructibleWall = (goDes == null) ? false : true;
+					bool isBomb = (goBomb == null) ? false : true;
 
 					Node n = new Node (walkable, isDestructibleWall, worldPoint, x, y);
+					if (isBomb)
+						n.setBomb (isBomb);
 					n.HeapIndex = index++;
 					grid [x, y] = n;
 				}
@@ -175,15 +179,17 @@ public class GridScript : MonoBehaviour {
 				for (int y = 0; y < directions [x].Count; y++) {
 				
 					if (isWalk)
-						directions [x] [y].walkable = false;
-					if (!directions [x] [y].walkable)
+						directions [x] [y].isBombRange = true;
+					if (!directions [x] [y].walkable) {
 						isWalk = true;
+						continue;
+					}
 
 					neighbours.Add (directions [x] [y]);
 				}
 			}
 
-			neighbours.RemoveAll (s => s.walkable == false);
+			neighbours.RemoveAll (s => s.isBombRange == true);
 		}
 		return neighbours;
 	}

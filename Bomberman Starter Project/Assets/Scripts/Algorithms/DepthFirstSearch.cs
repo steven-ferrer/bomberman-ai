@@ -41,20 +41,28 @@ public class DepthFirstSearch : MonoBehaviour {
 					}
 				}
 			}
-			safeZones = visitedNodes;
+
+			if (visitedNodes.Any (v => v.isBomb == true)) {
+				List<Node> bombs = visitedNodes.Where (b => b.isBomb == true).ToList();
+				Debug.Log ("Bomb Found: " +bombs.Count());
+				AvoidBombs (startNode, bombs);
+				search = false;
+			}
 		}
 	}
 
-	private void AvoidBombs(Node aiNode,Node bomb){
-		//Debug.Log ("AI: (" + aiNode.gridX + "," + aiNode.gridY + " => bomb: (" + bomb.gridX + "," + bomb.gridY); 
-		List<Node> rangeOfBomb = grid.GetNeighbours (bomb, bombRange,false);
-		rangeOfBomb.Add (aiNode);
-		//Debug.Log ("range bomb: " + rangeOfBomb.Count);
+	private void AvoidBombs(Node aiNode,List<Node> bombs){
+		List<Node> rangeOfBombs = new List<Node> (); 
+
+		foreach (Node n in bombs) {
+			List<Node> rangeOfBomb = grid.GetNeighbours (n, bombRange);
+			rangeOfBombs.AddRange (rangeOfBomb);
+		}
 	
 //		List<Node> safeZone = GetSearchResult (aiNode);
 //		safeZone.RemoveAll(x => rangeOfBomb.Contains(x));
-//
-//		safeZones = safeZone;
+
+		safeZones = rangeOfBombs;
 	}
 	
 
