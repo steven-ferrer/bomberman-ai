@@ -15,6 +15,8 @@ public class Bomb : MonoBehaviour {
 	private float timeBomb;
 	AudioSource audioSource;
 
+	public static List<Vector3> wallTobeDestroy = new List<Vector3>();
+
 	void Start () {
 		audioSource = GetComponent<AudioSource> ();
 		timeBomb = timeToExplode;
@@ -33,7 +35,7 @@ public class Bomb : MonoBehaviour {
 	void Explode(){
 		Instantiate(explosionPrefab, transform.position, Quaternion.identity); 
 		if (chainReaction == false) {
-			audioSource.PlayOneShot (soundExplosion, 0.7F);
+			//audioSource.PlayOneShot (soundExplosion, 0.7F);
 			chainReaction = true;
 		}
 		StartCoroutine(CreateExplosions(Vector3.forward));
@@ -56,6 +58,7 @@ public class Bomb : MonoBehaviour {
 				Instantiate (explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation); 
 			} else {
 				if (hit.collider.CompareTag ("Destructible")) {
+					wallTobeDestroy.Add (hit.transform.position);
 					Destroy (hit.transform.gameObject);
 				}
 				break; 

@@ -17,6 +17,8 @@ public class Agent : MonoBehaviour {
     private Rigidbody rigidBody;
 	private Animator animator;
 
+	bool walking = false;
+
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
 		dropPositions = new List<Vector3> ();
@@ -25,7 +27,10 @@ public class Agent : MonoBehaviour {
     }
 
 	void Update() {
-		animator.SetBool("Walking", false);
+		if (walking == true) {
+			walking = false;
+			animator.SetBool ("Walking", walking);
+		}
 	
 		switch (agentName) {
 		case "Player":
@@ -41,25 +46,29 @@ public class Agent : MonoBehaviour {
 		if (Input.GetKey(up)) { //Up movement
 			rigidBody.velocity = new Vector3(-moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
 			transform.rotation = Quaternion.Euler(0, 270, 0);
-			animator.SetBool("Walking", true);
+			walking = true;
+			animator.SetBool("Walking", walking);
 		}
 
 		if (Input.GetKey(down)) { //Down movement
 			rigidBody.velocity = new Vector3(moveSpeed, rigidBody.velocity.y, rigidBody.velocity.z);
 			transform.rotation = Quaternion.Euler(0, 90, 0);
-			animator.SetBool("Walking", true);
+			walking = true;
+			animator.SetBool("Walking", walking);
 		}
 
 		if (Input.GetKey(right)) { //Right movement
 			rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, moveSpeed);
 			transform.rotation = Quaternion.Euler(0, 0, 0);
-			animator.SetBool("Walking",true);
+			walking = true;
+			animator.SetBool("Walking",walking);
 		}
 
 		if (Input.GetKey(left)) { //Left movement
 			rigidBody.velocity = new Vector3(rigidBody.velocity.x, rigidBody.velocity.y, -moveSpeed);
 			transform.rotation = Quaternion.Euler(0, 180, 0);
-			animator.SetBool("Walking", true);
+			walking = true;
+			animator.SetBool("Walking", walking);
 		}
 
 		if (Input.GetKeyDown(dropBomb)) { //Drop bomb

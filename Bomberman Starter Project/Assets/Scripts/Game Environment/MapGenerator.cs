@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Diagnostics;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -28,6 +29,10 @@ public class MapGenerator : MonoBehaviour {
 
 	public void GenerateMap(){
 		//Initialize Random Destructible Position
+
+		Stopwatch sw = new Stopwatch ();
+		sw.Start ();
+
 		allTileCoords = new List<Coord> ();
 		for (int x = 1; x < mapSize.x - 1; x++) {
 			for (int y = 1; y < mapSize.y - 1; y++) {
@@ -106,6 +111,8 @@ public class MapGenerator : MonoBehaviour {
 			newWall.gameObject.layer = layerBlock;
 			newWall.gameObject.tag = "Destructible";
 		}
+
+		print ("Map was successfully generated at " + sw.ElapsedMilliseconds+" ms");
 	}
 
 	Vector3 CoorToPosition(int x, int y){

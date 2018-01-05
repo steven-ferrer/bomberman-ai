@@ -9,28 +9,25 @@ public class AI : MonoBehaviour {
 	public DepthFirstSearch dfs;
 	public float speed = 3;
 
+	bool walking = false;
+
 	private Animator animator;
 
 	Vector3[] path;
-	List<Node> walkableNodes;
 	int targetIndex;
-
-	Node[,] recentGrid;
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
+		grid.CreateGrid ();
 	}
 		
-
 	void Update(){
-		animator.SetBool ("Walking", false);	
-		grid.CreateGrid ();
-		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
-		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		dfs.Search (aiNode);
-		if (dfs.search == false) {
-		walkableNodes = dfs.safeZones;
+		if (walking == true) {
+			walking = false;
+			animator.SetBool ("Walking", walking);	
 		}
+
+		//PathRequestManager.RequestPath (new PathRequest (transform.position, target.position, OnPathFound));
 	}
 
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
@@ -73,20 +70,24 @@ public class AI : MonoBehaviour {
 		if (nextPos.y == 1 && nextPos.z == currentPos.z) {
 			if (nextPos.x < currentPos.x) {
 				transform.rotation = Quaternion.Euler(0, 270, 0); //Up
-				animator.SetBool("Walking", true);
+				walking = true;
+				animator.SetBool("Walking", walking);
 			} else{
 				transform.rotation = Quaternion.Euler (0, 90, 0); //Down
-				animator.SetBool("Walking", true);
+				walking = true;
+				animator.SetBool("Walking", walking);
 			}
 		} 
 
 		if (nextPos.y == 1 && nextPos.x == currentPos.x) {
 			if (nextPos.z > currentPos.z) {
 				transform.rotation = Quaternion.Euler (0, 0, 0); //right
-				animator.SetBool("Walking", true);
+				walking = true;
+				animator.SetBool("Walking", walking);
 			} else {
 				transform.rotation = Quaternion.Euler(0, 180, 0); //left
-				animator.SetBool("Walking", true);
+				walking = true;
+				animator.SetBool("Walking", walking);
 			}
 		}
 
@@ -99,13 +100,6 @@ public class AI : MonoBehaviour {
 				Gizmos.DrawCube (path [i], Vector3.one);
 			}
 		}
-		if (walkableNodes != null) {
-			foreach(Node n in walkableNodes){
-				Gizmos.color = Color.cyan;
-				Gizmos.DrawCube (n.worldPosition, Vector3.one);
-			}
-		}
-
 	}
 
 }

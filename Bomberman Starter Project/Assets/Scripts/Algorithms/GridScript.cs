@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Diagnostics;
 
 public class GridScript : MonoBehaviour {
 	
@@ -14,10 +15,18 @@ public class GridScript : MonoBehaviour {
 	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
+	private bool isCreated = false;
+
 	void Awake(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+	}
+
+	void Update(){
+		if (isCreated == true) {
+			UpdateWalls ();
+		}
 	}
 
 	public int MaxSize{
@@ -26,35 +35,50 @@ public class GridScript : MonoBehaviour {
 		}
 	}
 
+	public bool IsCreated(){
+		return isCreated;
+	}
+
 	public void CreateGrid(){
-		grid = new Node[gridSizeX,gridSizeY];
-		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
-		int index = 0;
-		for (int x = 0; x < gridSizeX; x++) {
-			for (int y = 0; y < gridSizeY; y++) {
+		if (isCreated == false) {
+			Stopwatch sw = new Stopwatch ();
+			sw.Start ();
 
-				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
-				bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis,unwalkableMask));
-				bool isAgent = (Physics.CheckSphere (worldPoint, nodeRaduis,playerCollisionMask));
-				Vector3 pos = new Vector3 (worldPoint.x, 1, worldPoint.z);
+			grid = new Node[gridSizeX, gridSizeY];
+			Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+			int index = 0;
+			for (int x = 0; x < gridSizeX; x++) {
+				for (int y = 0; y < gridSizeY; y++) {
+					Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
+					bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis, unwalkableMask));
+					GameObject goDes = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), "Destructible");
 
-				GameObject goDes = GetObjectByPosition (pos,"Destructible");
-				GameObject goBomb = GetObjectByPosition (pos, "Bomb");
+					bool isDestructibleWall = (goDes == null) ? false : true;
 
-				bool isBomb = (goBomb == null) ? false : true;
-				bool isDestructibleWall = (goDes == null) ? false : true;
-
-				Node n = new Node (walkable,isDestructibleWall, worldPoint,x,y);
-				n.setBomb (isBomb);
-				n.setAgent (isAgent);
-				if (isBomb) {
-					n.setTimeBomb (goBomb.GetComponent<Bomb> ().getTimeBomb ());
+					Node n = new Node (walkable, isDestructibleWall, worldPoint, x, y);
+					n.HeapIndex = index++;
+					grid [x, y] = n;
 				}
-				n.HeapIndex = index++;
-
-				grid [x, y] = n;
 			}
+			isCreated = true;
+			print ("Grid was successfully Created at " + sw.ElapsedMilliseconds+" ms");
+		}else
+			print ("Grid is already Created");
+	}
+
+	public void UpdateWalls(){
+		if (Bomb.wallTobeDestroy.Count > 0) {
+			foreach (Vector3 pos in Bomb.wallTobeDestroy) {
+				Node wall = NodeFromWorldPoint (pos);
+				grid [wall.gridX, wall.gridY].walkable = true;
+				grid [wall.gridX, wall.gridY].destructible = false;
+			}
+			Bomb.wallTobeDestroy.Clear ();
 		}
+	}
+
+	public static void DestroyDestructible(Vector3 position){
+		print (position.ToString ());
 	}
 
 	public List<Node> GetNeighbours(Node node){
@@ -133,9 +157,6 @@ public class GridScript : MonoBehaviour {
 		return neighbours;
 	}
 		
-
-
-
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
 		float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
