@@ -67,6 +67,7 @@ public class GridScript : MonoBehaviour {
 				}
 			}
 			isCreated = true;
+			sw.Stop ();
 			print ("Grid was successfully Created at " + sw.ElapsedMilliseconds+" ms");
 		}else
 			print ("Grid is already Created");
@@ -97,6 +98,7 @@ public class GridScript : MonoBehaviour {
 			foreach (Vector3 pos in Bomb.explodedBombs) {
 				Node wall = NodeFromWorldPoint (pos);
 				grid [wall.gridX, wall.gridY].setBomb (false);
+				grid [wall.gridX, wall.gridY].walkable = true;
 			}
 			Bomb.explodedBombs.Clear ();
 		}

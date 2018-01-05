@@ -14,6 +14,10 @@ public class MapGenerator : MonoBehaviour {
 	public Transform outerWall;
 	public int wallCount = 50;
 
+	public bool gridOnly = false;
+
+	private List<MeshRenderer> mapRenderers;
+
 	List<Coord> allTileCoords;
 	Queue<Coord> shuffledTileCoords;
 
@@ -27,6 +31,27 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+	void Awake(){
+		mapRenderers = new  List<MeshRenderer> ();
+	}
+
+	void Start(){
+		GameObject[] indestructibleObjects = GameObject.FindGameObjectsWithTag ("Indestructible");
+		GameObject[] destructibleObjects = GameObject.FindGameObjectsWithTag ("Destructible");
+		GameObject[] floorObjects = GameObject.FindGameObjectsWithTag ("Floor");
+
+		for (int x = 0; x < indestructibleObjects.Length; x++)
+			mapRenderers.Add (indestructibleObjects [x].GetComponent<MeshRenderer>());
+		for (int x = 0; x < destructibleObjects.Length; x++)
+			mapRenderers.Add (destructibleObjects [x].GetComponent<MeshRenderer>());
+		for (int x = 0; x < floorObjects.Length; x++)
+			mapRenderers.Add (floorObjects [x].GetComponent<MeshRenderer>());
+
+
+		foreach (MeshRenderer r in mapRenderers)
+			r.enabled = !gridOnly;
+	}
+		
 	public void GenerateMap(){
 		//Initialize Random Destructible Position
 
@@ -69,6 +94,7 @@ public class MapGenerator : MonoBehaviour {
 				Vector3 tilePosition = new Vector3 (-mapSize.x / 2 + 0.5f + x, 0, -mapSize.y / 2 + 0.5f + y);
 				Transform newTile;
 
+
 				//Floors
 				if ((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)) {
 					newTile = Instantiate (tile1, tilePosition, Quaternion.Euler (Vector3.right * 90)) as Transform;
@@ -82,6 +108,7 @@ public class MapGenerator : MonoBehaviour {
 					newWall.parent = transWall;
 					transWall.parent = mapHolder;
 					newWall.gameObject.layer = layerBlock;
+					newWall.gameObject.tag = "Indestructible";
 				}
 
 				//Indestructible Walls
@@ -112,6 +139,7 @@ public class MapGenerator : MonoBehaviour {
 			newWall.gameObject.tag = "Destructible";
 		}
 
+		sw.Stop ();
 		print ("Map was successfully generated at " + sw.ElapsedMilliseconds+" ms");
 	}
 

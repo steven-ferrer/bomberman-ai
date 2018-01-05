@@ -60,6 +60,7 @@ public class DepthFirstSearch : MonoBehaviour {
 
 	private void AvoidBombs(Node aiNode,List<Node> bombs,List<Node> visitedNodes){
 		List<Node> rangeOfBombs = new List<Node> (); 
+		rangeOfBombs.Add (aiNode);
 
 		foreach (Node n in bombs) {
 			n.walkable = false;
@@ -68,13 +69,11 @@ public class DepthFirstSearch : MonoBehaviour {
 			rangeOfBombs.AddRange (rangeOfBomb);
 		}
 
-		//List<Node> safeZone = GetSearchResult (aiNode);
 		visitedNodes.RemoveAll(x => rangeOfBombs.Contains(x));
 		safeZones = visitedNodes;
 
 		//find path according to waypoints. lowest to highest
-			foreach(Node n in visitedNodes)
-				PathRequestManager.RequestPath (new PathRequest (aiNode.worldPosition, n.worldPosition, OnPathFound));
+		//PathRequestManager.RequestPath (new PathRequest (aiNode.worldPosition, safeZones.First().worldPosition, OnPathFound));
 		
 	}
 
@@ -84,8 +83,9 @@ public class DepthFirstSearch : MonoBehaviour {
 //			path = newPath;
 //			StopCoroutine ("FollowPath");
 //			StartCoroutine ("FollowPath");
-			//Debug.Log("Path was successfully found");
-		}
+			Debug.Log ("Path was successfully found");
+		} else
+			Debug.Log ("Not found");
 	}
 
 
