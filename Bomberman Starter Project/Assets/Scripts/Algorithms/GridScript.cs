@@ -135,7 +135,10 @@ public class GridScript : MonoBehaviour {
 			for (int y = -range; y <= range; y++) {
 				if (x == 0 && y == 0)
 						continue;
-				
+
+
+				print (x + "," + y);
+
 				int checkX = node.gridX + x;
 				int checkY = node.gridY + y;
 
@@ -186,7 +189,7 @@ public class GridScript : MonoBehaviour {
 						directions [x] [y].isBombRange = true;
 					if (!directions [x] [y].walkable) {
 						isWalk = true;
-						continue;
+						break;
 					}
 
 					neighbours.Add (directions [x] [y]);

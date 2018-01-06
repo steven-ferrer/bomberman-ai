@@ -60,17 +60,33 @@ public class DepthFirstSearch : MonoBehaviour {
 
 	private void AvoidBombs(Node aiNode,List<Node> bombs,List<Node> visitedNodes){
 		List<Node> rangeOfBombs = new List<Node> (); 
-		rangeOfBombs.Add (aiNode);
 
 		foreach (Node n in bombs) {
-			n.walkable = false;
 			List<Node> rangeOfBomb = grid.GetNeighbours (n, bombRange);
 			rangeOfBomb.Add (n);
 			rangeOfBombs.AddRange (rangeOfBomb);
 		}
-
 		visitedNodes.RemoveAll(x => rangeOfBombs.Contains(x));
-		safeZones = visitedNodes;
+
+		int increasedRange = 2;
+		bool doneEvaluate = false;
+		List<Node> evaluatedSafeZone = grid.GetNeighbours (aiNode, increasedRange, true);
+
+
+
+		//nothing to hide. check first if there is a safe zone on all dfs search
+
+
+
+//		while (doneEvaluate == false) {
+//			evaluatedSafeZone.RemoveAll(x => !visitedNodes.Contains(x));
+//			if (evaluatedSafeZone.Count > 0)
+//				doneEvaluate = true;
+//		}
+
+		safeZones = evaluatedSafeZone;
+
+
 
 		//find path according to waypoints. lowest to highest
 		//PathRequestManager.RequestPath (new PathRequest (aiNode.worldPosition, safeZones.First().worldPosition, OnPathFound));
