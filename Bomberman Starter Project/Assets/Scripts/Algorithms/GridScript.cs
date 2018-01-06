@@ -121,24 +121,35 @@ public class GridScript : MonoBehaviour {
 	}
 
 	public List<Node> GetNeighbours(Node node){
-		return GetNeighbours (node, 1, false);
+		return GetNeighbours (node, 1, false,false);
 	}
 
 	public List<Node> GetNeighbours(Node node, int range){
-		return GetNeighbours (node, range, false);
+		return GetNeighbours (node, range, false,false);
 	}
 
 	public List<Node> GetNeighbours(Node node,int range,bool diagonal){
+		return GetNeighbours (node, range, diagonal, false);
+	}
+
+	public List<Node> GetNeighbours(Node node,int range,bool diagonal,bool borderOnly){
 		List<Node> neighbours = new List<Node> ();
+		bool yCheck = false;
 
 		for (int x = -range; x <= range; x++) {
 			for (int y = -range; y <= range; y++) {
 				if (x == 0 && y == 0)
 						continue;
 
-
-				print (x + "," + y);
-
+				//for evaulation
+				if (borderOnly) {
+					yCheck =  (y == 0 || (y < 0 && y > -range) || (y > 0 && y < range));
+					if ((x < 0 && x > -range) && yCheck)
+						continue;
+					if ((x > 0 && x < range) && yCheck)
+						continue;
+				}
+				
 				int checkX = node.gridX + x;
 				int checkY = node.gridY + y;
 
@@ -147,8 +158,14 @@ public class GridScript : MonoBehaviour {
 						if ((x == 0 && (y < 0 || y > 0)) || (y == 0 && (x < 0 || x > 0))) {
 							neighbours.Add (grid [checkX, checkY]);
 						}
-					}else
+					} else {
+						//for evaulation
+						if (borderOnly) {
+							if (x == 0 && yCheck)
+								continue;
+						}
 						neighbours.Add (grid [checkX, checkY]);
+					}
 				}
 			}
 		} 
@@ -191,7 +208,6 @@ public class GridScript : MonoBehaviour {
 						isWalk = true;
 						break;
 					}
-
 					neighbours.Add (directions [x] [y]);
 				}
 			}

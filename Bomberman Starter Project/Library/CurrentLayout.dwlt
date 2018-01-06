@@ -70,7 +70,7 @@ MonoBehaviour:
   m_MinSize: {x: 277, y: 192}
   m_MaxSize: {x: 4002, y: 8042}
   vertical: 1
-  controlID: 87
+  controlID: 82
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_MinSize: {x: 713, y: 271}
   m_MaxSize: {x: 18008, y: 10021}
   vertical: 0
-  controlID: 86
+  controlID: 81
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -366,14 +366,14 @@ MonoBehaviour:
     width: 701
     height: 614
   m_SceneLighting: 1
-  lastFramingTime: 8108.535976978315
+  lastFramingTime: 1369.2947347362658
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.6484375, y: 1.5410156, z: 0.4116783}
+    m_Target: {x: 4.0336704, y: 1.0674183, z: 6.413019}
     speed: 2
-    m_Value: {x: -0.6484375, y: 1.5410156, z: 0.4116783}
+    m_Value: {x: 4.0336704, y: 1.0674183, z: 6.413019}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -396,13 +396,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.43944302, y: -0.55379766, z: 0.43866265, w: 0.55479664}
+    m_Target: {x: 0.4242953, y: -0.5609733, z: 0.4097858, w: 0.58083165}
     speed: 2
-    m_Value: {x: 0.43943727, y: -0.5537904, z: 0.4386569, w: 0.55478936}
+    m_Value: {x: 0.42429373, y: -0.5609712, z: 0.4097843, w: 0.5808295}
   m_Size:
-    m_Target: 11.6611
+    m_Target: 14.922083
     speed: 2
-    m_Value: 11.6611
+    m_Value: 14.922083
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -457,14 +457,14 @@ MonoBehaviour:
   m_StartGridSize: 16
   m_LastFolders: []
   m_LastFoldersGridSize: 16
-  m_LastProjectPath: C:\Users\Shadow\Dropbox\Thesis Implementation\Bomberman Starter
+  m_LastProjectPath: C:\Users\-Shadow-\Dropbox\Thesis Implementation\Bomberman Starter
     Project
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: ba270000
     m_LastClickedID: 10170
-    m_ExpandedIDs: 000000006027000086270000fe27000024380000
+    m_ExpandedIDs: 000000005e2700008427000018380000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -492,21 +492,21 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000060270000862700001028000024380000
+    m_ExpandedIDs: 000000005e27000084270000fc2700000e28000018380000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: AStar
+      m_OriginalName: AStar
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 1824
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 9}
     m_SearchString: 
@@ -574,24 +574,24 @@ MonoBehaviour:
     width: 336
     height: 193
   m_TreeViewState:
-    scrollPos: {x: 0, y: 144}
-    m_SelectedIDs: 922b0000
-    m_LastClickedID: 11154
-    m_ExpandedIDs: a6fbffff00000000102f0000d03200002a360000
+    scrollPos: {x: 0, y: 1520}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: a6fbffff00000000c62c00007e3400004e35000048360000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Agent:Aggressive AI
+      m_OriginalName: Agent:Aggressive AI
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: -34458
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 2}
     m_SearchString: 

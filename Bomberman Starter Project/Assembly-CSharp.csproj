@@ -53,7 +53,6 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Algorithms\AI.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AStar.cs" />
-     <Compile Include="Assets\Scripts\Algorithms\DepthFirstSearch.cs" />
      <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
      <Compile Include="Assets\Scripts\Algorithms\PathRequestManager.cs" />
      <Compile Include="Assets\Scripts\Datastructure\Heap.cs" />
@@ -93,10 +92,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Users/Shadow/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Purchasing">
- <HintPath>C:/Users/Shadow/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

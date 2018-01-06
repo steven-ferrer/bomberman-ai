@@ -59,7 +59,6 @@ public class AStar : MonoBehaviour {
 		}
 		if (pathSuccess) {
 			waypoints = RetracePath (startNode, targetNode);
-			print (waypoints.Length + " ");
 			pathSuccess = waypoints.Length > 0;
 		}
 		callback(new PathResult(waypoints,pathSuccess,request.callback));
