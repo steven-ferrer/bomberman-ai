@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Threading;
 
 public class AI : MonoBehaviour {
-
 	public GridScript grid;
 	public DepthFirstSearch dfs;
 	public float speed = 3;
