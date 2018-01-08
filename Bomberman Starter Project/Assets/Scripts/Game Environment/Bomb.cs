@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour {
 	public GameObject explosionPrefab;
-	public LayerMask levelMask;
+	public LayerMask blockMask;
 	public AudioClip soundExplosion;
 
 	public int bombRange = 3;
@@ -14,10 +14,6 @@ public class Bomb : MonoBehaviour {
 	private bool chainReaction = false;
 	private float timeBomb;
 	AudioSource audioSource;
-
-	public static List<Vector3> wallTobeDestroy = new List<Vector3>();
-	public static List<Vector3> droppedBombs = new List<Vector3> ();
-	public static List<Vector3> explodedBombs = new List<Vector3> ();
 
 	void Start () {
 		audioSource = GetComponent<AudioSource> ();
@@ -49,19 +45,19 @@ public class Bomb : MonoBehaviour {
 		exploded = true;
 		transform.Find("Collider").gameObject.SetActive(false); 
 		Destroy(gameObject, .4f); 
-		Bomb.explodedBombs.Add (transform.position);
+		GridScript.Exploded_Bombs.Add (transform.position);
 	}
 
 	private IEnumerator CreateExplosions(Vector3 direction) {
 		for (int i = 1; i <= bombRange; i++) { 
 			RaycastHit hit; 
-			Physics.Raycast (transform.position + new Vector3 (0, .5f, 0), direction, out hit, i, levelMask); 
+			Physics.Raycast (transform.position + new Vector3 (0, .5f, 0), direction, out hit, i, blockMask); 
 
 			if (!hit.collider) { 
 				Instantiate (explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation); 
 			} else {
-				if (hit.collider.CompareTag ("Destructible")) {
-					wallTobeDestroy.Add (hit.transform.position);
+				if (hit.collider.CompareTag (GameObjectType.DESTRUCTIBLE_WALL.GetTag())) {
+					GridScript.Walls_Destroyed.Add (hit.transform.position);
 					Destroy (hit.transform.gameObject);
 				}
 				break; 
@@ -71,13 +67,10 @@ public class Bomb : MonoBehaviour {
 	}
 
 	public void OnTriggerEnter(Collider other){
-		if (!exploded && other.CompareTag("Explosion")) { 
+		if (!exploded && other.CompareTag(GameObjectType.EXPLOSION.GetTag())) { 
 			CancelInvoke("Explode");
 			chainReaction = true;
 			Explode(); 
 		}  
 	}
-
-
-
 }

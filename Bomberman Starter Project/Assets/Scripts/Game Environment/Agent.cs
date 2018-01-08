@@ -39,18 +39,13 @@ public class Agent : MonoBehaviour {
 		currentPos = transform.position;
 
 		if (Utility.RoundToInt (currentPos) != Utility.RoundToInt (nextPos)) { 
-			grid.UpdateAgentMoves (currentPos,nextPos);
+			grid.UpdateAgentMoves (currentPos,nextPos,transform.gameObject.name);
 			nextPos = currentPos;
 		}
 			
-
-		switch (agentName) {
-		case "Player":
+		if (agentName == GameObjectType.PLAYER.ToString ()) {
 			UpdateMovement (KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
-			break;
-		case "Aggressive AI":
 			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
-			break;
 		}
     }
 
@@ -90,7 +85,7 @@ public class Agent : MonoBehaviour {
 
     private void DropBomb() {
         if (bombPrefab) { 
-			bombPrefab.name = "Agent:" + agentName;
+			bombPrefab.name = GameObjectType.AGENT.ToString() +":" + agentName;
 			checkDropBomb();
 			if (dropBomb < maxBomb) {
 				Vector3 dropPosition = Utility.RoundToInt(transform.position);
@@ -100,7 +95,7 @@ public class Agent : MonoBehaviour {
 					}
 				}
 				Instantiate (bombPrefab, dropPosition, bombPrefab.transform.rotation);
-				Bomb.droppedBombs.Add (dropPosition);
+				GridScript.Dropped_Bombs.Add (dropPosition);
 			}
 			dropBomb = 0;
         }
@@ -109,10 +104,10 @@ public class Agent : MonoBehaviour {
 	private void checkDropBomb(){
 	 	GameObject[] bombs = null;
 		if (bombs == null) {
-			bombs = GameObject.FindGameObjectsWithTag ("Bomb");
+			bombs = GameObject.FindGameObjectsWithTag (GameObjectType.BOMB.GetTag());
 			dropPositions.Clear ();
 			foreach (GameObject bomb in bombs) {
-				if (bomb.name == "Agent:" + agentName + "(Clone)") {
+				if (bomb.name == GameObjectType.AGENT.ToString() +":" + agentName + "(Clone)") {
 					dropBomb++;
 					dropPositions.Add (bomb.transform.position);
 				}
@@ -121,7 +116,7 @@ public class Agent : MonoBehaviour {
 	}
 		
     public void OnTriggerEnter(Collider other) {
-		if(other.CompareTag ("Explosion")) {
+		if(other.CompareTag (GameObjectType.EXPLOSION.GetTag())) {
 			GlobalManager.PlayerDied (agentName); 
 			Destroy (gameObject); 
 		} 

@@ -5,7 +5,8 @@ using System.Linq;
 using System.Diagnostics;
 
 public class GridScript : MonoBehaviour {
-	
+
+	public Bomb bombScript;
 	public LayerMask unwalkableMask;
 	public LayerMask playerCollisionMask;
 	public Vector2 gridWorldSize;
@@ -17,10 +18,18 @@ public class GridScript : MonoBehaviour {
 
 	private bool isCreated = false;
 
+	public static List<Vector3> Walls_Destroyed = new List<Vector3>();
+	public static List<Vector3> Dropped_Bombs = new List<Vector3> ();
+	public static List<Vector3> Exploded_Bombs = new List<Vector3> ();
+
 	void Awake(){
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+	}
+
+	void Start(){
+		CreateGrid ();
 	}
 
 	void Update(){
@@ -36,10 +45,6 @@ public class GridScript : MonoBehaviour {
 		}
 	}
 
-	public bool IsCreated(){
-		return isCreated;
-	}
-
 	public void CreateGrid(){
 		if (isCreated == false) {
 			Stopwatch sw = new Stopwatch ();
@@ -52,17 +57,20 @@ public class GridScript : MonoBehaviour {
 				for (int y = 0; y < gridSizeY; y++) {
 					Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRaduis) + Vector3.forward * (y * nodeDiameter + nodeRaduis);
 					bool walkable = !(Physics.CheckSphere (worldPoint, nodeRaduis, unwalkableMask));
-					GameObject goDes = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), "Destructible");
-					GameObject goBomb = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), "Bomb");
+					GameObject goDes = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), GameObjectType.DESTRUCTIBLE_WALL.GetTag());
+					GameObject goBomb = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), GameObjectType.BOMB.GetTag());
+					GameObject goAgent = GetObjectByPosition (new Vector3 (worldPoint.x, 1, worldPoint.z), GameObjectType.AGENT.GetTag());
 
 					bool isDestructibleWall = (goDes == null) ? false : true;
 					bool isBomb = (goBomb == null) ? false : true;
+					bool isAgent = (goAgent == null) ? false : true;
 
 					Node n = new Node (walkable, isDestructibleWall, worldPoint, x, y);
-					if (isBomb) {
-						n.setBomb (isBomb);
-					}
+					n.isBomb = isBomb;
 					n.HeapIndex = index++;
+					if (isAgent)
+						n.agentName = goAgent.name;
+					
 					grid [x, y] = n;
 				}
 			}
@@ -74,46 +82,59 @@ public class GridScript : MonoBehaviour {
 	}
 
 	private void UpdateWalls(){
-		if (Bomb.wallTobeDestroy.Count > 0) {
-			foreach (Vector3 pos in Bomb.wallTobeDestroy) {
+		if (GridScript.Walls_Destroyed.Count > 0) {
+			foreach (Vector3 pos in GridScript.Walls_Destroyed) {
 				Node wall = NodeFromWorldPoint (pos);
 				grid [wall.gridX, wall.gridY].walkable = true;
 				grid [wall.gridX, wall.gridY].destructible = false;
 			}
-			Bomb.wallTobeDestroy.Clear ();
+			GridScript.Walls_Destroyed.Clear ();
 		}
 	}
+
+	IEnumerator UpdateExplosion(Node bomb){
+		List<Node> explosionRange = GetNeighbours (bomb, bombScript.bombRange);
+		foreach (Node n in explosionRange) {
+			grid [n.gridX, n.gridY].isBombRange = true;
+		}
+		yield return new WaitForSeconds (.05f);
+	}
+
 
 	private void UpdateBombs(){
-		if (Bomb.droppedBombs.Count > 0) {
-			foreach (Vector3 pos in Bomb.droppedBombs) {
-				Node wall = NodeFromWorldPoint (pos);
-				grid [wall.gridX, wall.gridY].setBomb (true);
-				grid [wall.gridX, wall.gridY].walkable = false;
+		if (GridScript.Dropped_Bombs.Count > 0) {
+			foreach (Vector3 pos in GridScript.Dropped_Bombs) {
+				Node bomb = NodeFromWorldPoint (pos);
+				GameObject go = GetObjectByPosition (pos, GameObjectType.BOMB.GetTag ());
+				grid [bomb.gridX, bomb.gridY].isBomb = true;
+				grid [bomb.gridX, bomb.gridY].walkable = false;
+				StartCoroutine (UpdateExplosion (bomb));
 			}
-			Bomb.droppedBombs.Clear ();
+			GridScript.Dropped_Bombs.Clear ();
 		}
 
-		if (Bomb.explodedBombs.Count > 0) {
-			foreach (Vector3 pos in Bomb.explodedBombs) {
-				Node wall = NodeFromWorldPoint (pos);
-				grid [wall.gridX, wall.gridY].setBomb (false);
-				grid [wall.gridX, wall.gridY].walkable = true;
+		if (GridScript.Exploded_Bombs.Count > 0) {
+			foreach (Vector3 pos in GridScript.Exploded_Bombs) {
+				Node bomb = NodeFromWorldPoint (pos);
+				grid [bomb.gridX, bomb.gridY].isBomb = false;
+				grid [bomb.gridX, bomb.gridY].walkable = true;
 			}
-			Bomb.explodedBombs.Clear ();
+			GridScript.Exploded_Bombs.Clear ();
 		}
 	}
 
-	public void UpdateAgentMoves(Vector3 current, Vector3 next){
+	public void UpdateAgentMoves(Vector3 current, Vector3 next,string agentName){
 		Node currentNode = NodeFromWorldPoint (Utility.RoundToInt(current));
 		Node nextNode = NodeFromWorldPoint (Utility.RoundToInt(next));
 
 		if (next == Vector3.zero) {
-			grid [currentNode.gridX, currentNode.gridY].setAgent (true);
+			grid [currentNode.gridX, currentNode.gridY].agentName = agentName;
 		} else {
-			grid [currentNode.gridX, currentNode.gridY].setAgent (true);
-			grid [nextNode.gridX, nextNode.gridY].setAgent (false);
+			grid [currentNode.gridX, currentNode.gridY].agentName = agentName;
+			grid [nextNode.gridX, nextNode.gridY].agentName = null;
 		}
+
+		print (grid [currentNode.gridX, currentNode.gridY].agentName);
 	}
 
 	public static void DestroyDestructible(Vector3 position){
@@ -240,7 +261,7 @@ public class GridScript : MonoBehaviour {
 	}
 
 	void OnDrawGizmos(){
-		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 2, gridWorldSize.y));
+		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
 		if (grid != null) {
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable) ? Color.white : Color.red;
@@ -248,11 +269,14 @@ public class GridScript : MonoBehaviour {
 					Gizmos.color = Color.blue;
 				if (n.isBomb == true && n.walkable == false)
 					Gizmos.color = Color.grey;
-				if (n.isAgent == true)
+				if (n.agentName != null)
 					Gizmos.color = Color.green;
+				if (n.isBombRange == true)
+					Gizmos.color = Color.magenta;
 				
 				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f) );
 			}
 		}
 	}
+
 }

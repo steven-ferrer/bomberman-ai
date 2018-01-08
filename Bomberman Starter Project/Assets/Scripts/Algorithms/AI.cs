@@ -21,7 +21,6 @@ public class AI : MonoBehaviour {
 
 	void Start(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
-		grid.CreateGrid ();
 	}
 		
 	void Update(){
@@ -30,14 +29,14 @@ public class AI : MonoBehaviour {
 			animator.SetBool ("Walking", walking);	
 		}
 
-		Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		Search (aiNode);
+		//Node aiNode = grid.NodeFromWorldPoint (transform.position);
+		//Search (aiNode);
 
-		if (countPathFound == 0) {
-			StopCoroutine ("FollowPath");
-			StartCoroutine ("FollowPath");
-			countPathFound = -1;
-		}
+//		if (countPathFound == 0) {
+//			StopCoroutine ("FollowPath");
+//			StartCoroutine ("FollowPath");
+//			countPathFound = -1;
+//		}
 	}
 		
 	//----------------------------------------SEACHING OBJECTS-----------------------------------------------

@@ -16,6 +16,7 @@ public static class Utility{
 		return array;
 	}
 
+	//Round x y and z to integer
 	public static Vector3 RoundToInt(Vector3 vector){
 		return new Vector3(Mathf.Round(vector.x), Mathf.Round(vector.y), Mathf.Round(vector.z));
 	}

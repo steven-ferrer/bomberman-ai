@@ -9,7 +9,7 @@ public class MapEditor : Editor {
 		base.OnInspectorGUI ();
 		MapGenerator map = target as MapGenerator;
 		if (GUILayout.Button ("GENERATE MAP")) {
-			map.GenerateMap ();
+			map.GenerateMap (); //Generate a random destructible walls
 		}
 	}
 }
