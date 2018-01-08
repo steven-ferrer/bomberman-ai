@@ -91,24 +91,41 @@ public class GridScript : MonoBehaviour {
 			GridScript.Walls_Destroyed.Clear ();
 		}
 	}
+		
 
-	IEnumerator UpdateExplosion(Node bomb){
+	List<int> dropRangeIndex = new List<int>();
+	IEnumerator UpdateExplosion(Node bomb,bool isDropRange){
 		List<Node> explosionRange = GetNeighbours (bomb, bombScript.bombRange);
-		foreach (Node n in explosionRange) {
-			grid [n.gridX, n.gridY].isBombRange = true;
+		if (explosionRange.Count > 0) {
+			grid [bomb.gridX, bomb.gridY].isDropRange = isDropRange;
+			if(isDropRange)
+				grid [bomb.gridX, bomb.gridY].walkable = true;
+			foreach (Node n in explosionRange) {
+				if (isDropRange) {
+					if (grid [n.gridX, n.gridY].isDropRange) {
+						dropRangeIndex.Add (n.HeapIndex);
+					}
+					else
+						grid [n.gridX, n.gridY].isDropRange = isDropRange;
+				} else {
+					if (dropRangeIndex.Contains (n.HeapIndex)) {
+						dropRangeIndex.Remove (n.HeapIndex);
+					} else 
+						grid [n.gridX, n.gridY].isDropRange = isDropRange;
+				}
+			}
 		}
+
 		yield return new WaitForSeconds (.05f);
 	}
-
-
+		
 	private void UpdateBombs(){
 		if (GridScript.Dropped_Bombs.Count > 0) {
 			foreach (Vector3 pos in GridScript.Dropped_Bombs) {
 				Node bomb = NodeFromWorldPoint (pos);
-				GameObject go = GetObjectByPosition (pos, GameObjectType.BOMB.GetTag ());
 				grid [bomb.gridX, bomb.gridY].isBomb = true;
 				grid [bomb.gridX, bomb.gridY].walkable = false;
-				StartCoroutine (UpdateExplosion (bomb));
+				StartCoroutine (UpdateExplosion (bomb,true));
 			}
 			GridScript.Dropped_Bombs.Clear ();
 		}
@@ -118,6 +135,7 @@ public class GridScript : MonoBehaviour {
 				Node bomb = NodeFromWorldPoint (pos);
 				grid [bomb.gridX, bomb.gridY].isBomb = false;
 				grid [bomb.gridX, bomb.gridY].walkable = true;
+				StartCoroutine (UpdateExplosion (bomb,false));
 			}
 			GridScript.Exploded_Bombs.Clear ();
 		}
@@ -133,8 +151,6 @@ public class GridScript : MonoBehaviour {
 			grid [currentNode.gridX, currentNode.gridY].agentName = agentName;
 			grid [nextNode.gridX, nextNode.gridY].agentName = null;
 		}
-
-		print (grid [currentNode.gridX, currentNode.gridY].agentName);
 	}
 
 	public static void DestroyDestructible(Vector3 position){
@@ -267,12 +283,12 @@ public class GridScript : MonoBehaviour {
 				Gizmos.color = (n.walkable) ? Color.white : Color.red;
 				if (n.walkable == false && n.destructible == true)
 					Gizmos.color = Color.blue;
-				if (n.isBomb == true && n.walkable == false)
+				if (n.isDropRange == true)
+					Gizmos.color = Color.magenta;
+				if (n.isBomb == true)
 					Gizmos.color = Color.grey;
 				if (n.agentName != null)
 					Gizmos.color = Color.green;
-				if (n.isBombRange == true)
-					Gizmos.color = Color.magenta;
 				
 				Gizmos.DrawCube (n.worldPosition, Vector3.one * (nodeDiameter - .1f) );
 			}

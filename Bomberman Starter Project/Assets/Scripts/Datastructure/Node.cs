@@ -17,6 +17,7 @@ public class Node : IHeapItem<Node> {
 	public bool isBomb = false;
 	public string agentName = null;
 	public bool isBombRange = false;
+	public bool isDropRange = false;
 
 	public Node(bool walkable,bool destructible, Vector3 worldPosition,int gridX, int gridY){
 		this.walkable = walkable;
