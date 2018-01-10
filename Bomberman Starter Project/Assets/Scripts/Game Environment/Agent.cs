@@ -83,7 +83,7 @@ public class Agent : MonoBehaviour {
 		}
     }
 
-    private void DropBomb() {
+    public void DropBomb() {
         if (bombPrefab) { 
 			bombPrefab.name = GameObjectType.AGENT.ToString() +":" + agentName;
 			checkDropBomb();

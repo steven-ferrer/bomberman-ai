@@ -13,7 +13,7 @@ public class GridScript : MonoBehaviour {
 	public float nodeRaduis;
 
 	Node[,] grid;
-	float nodeDiameter;
+	public float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
 	private bool isCreated = false;
@@ -26,9 +26,7 @@ public class GridScript : MonoBehaviour {
 		nodeDiameter = nodeRaduis * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-	}
 
-	void Start(){
 		CreateGrid ();
 	}
 
@@ -238,7 +236,7 @@ public class GridScript : MonoBehaviour {
 
 				bool isWalk = false;
 				for (int y = 0; y < directions [x].Count; y++) {
-				
+					
 					if (isWalk)
 						directions [x] [y].isBombRange = true;
 					if (!directions [x] [y].walkable) {

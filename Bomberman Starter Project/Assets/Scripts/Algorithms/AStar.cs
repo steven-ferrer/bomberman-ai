@@ -19,8 +19,8 @@ public class AStar : MonoBehaviour {
 		Vector3[] waypoints = new Vector3[0];
 		bool pathSuccess = false;
 
-		Node startNode = grid.NodeFromWorldPoint (request.pathStart);
-		Node targetNode = grid.NodeFromWorldPoint (request.pathEnd);
+		Node startNode = request.pathStart;
+		Node targetNode = request.pathEnd;
 
 		if (startNode.walkable && targetNode.walkable) {
 			Heap<Node> openSet = new Heap<Node> (grid.MaxSize);
@@ -63,6 +63,62 @@ public class AStar : MonoBehaviour {
 		}
 		callback(new PathResult(waypoints,pathSuccess,request.callback));
 	}
+		
+	public void FindShortestPath(ShortestPathRequest request,Action<ShortestPathResult> callback){
+		Vector3[] waypoints = new Vector3[0];
+		int minWaypoint = -1;
+		Node shortestPath = null;
+		bool pathSuccess = false;
+
+		Node startNode = request.startNode;
+
+		foreach (Node endNode in request.endNodes) {
+			if (startNode.walkable && endNode.walkable) {
+				Heap<Node> openSet = new Heap<Node> (grid.MaxSize);
+				HashSet<Node> closedSet = new HashSet<Node> ();
+				openSet.Add (startNode);
+
+				while (openSet.Count > 0) {
+					Node currentNode = openSet.RemoveFirst (); 
+					closedSet.Add (currentNode);
+
+					if (currentNode == endNode) {
+						waypoints = RetracePath (startNode, endNode);
+
+						if (shortestPath == null) {
+							shortestPath = endNode;
+							minWaypoint = waypoints.Length;
+						}
+						else {
+							if (waypoints.Length < minWaypoint) {
+								minWaypoint = waypoints.Length;
+								shortestPath = endNode;
+							}
+						}
+					}
+
+					foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
+						if (closedSet.Contains (neighbour)) {
+							continue;
+						}
+
+						int newMovementCostToNeighbour = currentNode.gCost + GetManhattanDistance (currentNode, neighbour);
+						if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains (neighbour)) {
+							neighbour.gCost = newMovementCostToNeighbour;
+							neighbour.hCost = GetManhattanDistance (neighbour, endNode);
+							neighbour.parent = currentNode;
+
+							if (!openSet.Contains (neighbour))
+								openSet.Add (neighbour);
+							else
+								openSet.UpdateItem (neighbour);
+						}
+					}
+				}
+			}
+		}
+		callback (new ShortestPathResult (shortestPath, request.callback));
+	}
 
 	Vector3[] RetracePath(Node startNode,Node endNode){
 		List<Node> path = new List<Node> ();
@@ -76,8 +132,6 @@ public class AStar : MonoBehaviour {
 		path.Reverse();
 		List<Vector3> waypoints = new List<Vector3> ();
 		for (int i = 0; i < path.Count; i++) {
-			//instead of floor 0 y axis, the y axis of Agent is 1
-			path[i].worldPosition.y = 1.0f;
 			waypoints.Add (path[i].worldPosition);
 		}
 

@@ -11,16 +11,23 @@ public class AI : MonoBehaviour {
 	public float speed = 3;
 
 	private Animator animator;
+
 	bool walking = false;	
 	bool search = true;
-
 	int targetIndex;
-	int countPathFound = -1;
 
-	Vector3[] minWaypoint;
+	Vector3[] path;
 
-	void Start(){
+	List<Node> accesibleTiles;
+	List<Node> visual;
+	Node aiNode;
+	Node shortestPath;
+
+	Agent agent;
+
+	void Awake(){
 		animator = transform.Find("PlayerModel").GetComponent<Animator>();
+		agent = GetComponent<Agent> ();
 	}
 		
 	void Update(){
@@ -29,31 +36,36 @@ public class AI : MonoBehaviour {
 			animator.SetBool ("Walking", walking);	
 		}
 
-		//Node aiNode = grid.NodeFromWorldPoint (transform.position);
-		//Search (aiNode);
-
-//		if (countPathFound == 0) {
-//			StopCoroutine ("FollowPath");
-//			StartCoroutine ("FollowPath");
-//			countPathFound = -1;
-//		}
+		Searching ();
 	}
-		
-	//----------------------------------------SEACHING OBJECTS-----------------------------------------------
-	public void Search(Node startNode){
+
+	private void Searching (){
 		if (search == true) {
+			aiNode = grid.NodeFromWorldPoint (transform.position);
+			accesibleTiles = GetAccesibleTiles (aiNode);
 			print ("Searching...");
-			List<Node> visitedNodes = GetVisitedNodes (startNode);
-			if (visitedNodes.Any (v => v.isBomb == true)) {
-				print ("Found Bomb!");
+			visual = accesibleTiles;
+			if (accesibleTiles.Any (v => v.isBomb == true)) {
+				print ("Found bomb!");
 				search = false;
-				List<Node> bombs = visitedNodes.Where (b => b.isBomb == true).ToList ();
-				AvoidBombs (startNode, bombs, visitedNodes);
+			} else if (accesibleTiles.Any (v => v.agentName != null && v.agentName != transform.name)) {
+				print ("Found enemy!");
+				search = false;
+			} else {
+				if (Input.GetKey (KeyCode.F)) {
+					print ("Destroy Destructible Walls");
+					DestroyDestructibleWall (GetNearestDestructibleWall ());
+					search = false;
+				}
 			}
 		}
 	}
 
-	private List<Node> GetVisitedNodes(Node startNode){
+	public void FoundShortestPath(Node shortestPath){
+		this.shortestPath = shortestPath;
+	}
+
+	private List<Node> GetAccesibleTiles(Node startNode){
 		List<Node> visitedNodes = new List<Node> ();
 		Stack<Node> stack = new Stack<Node> ();
 		stack.Push (startNode); 
@@ -65,82 +77,89 @@ public class AI : MonoBehaviour {
 
 				List<Node> neighbours = grid.GetNeighbours (node);
 				foreach (Node n in neighbours) {
-					if (!visitedNodes.Contains (n)) {
+					if (!visitedNodes.Contains (n))
 						stack.Push (n);
-					}
 				}
 			}
 		}
 		return visitedNodes;
 	}
-	//----------------------------------------SEACHING OBJECTS-----------------------------------------------
+		
+	private Node GetNearestDestructibleWall(){
+		bool doneEvaluate = false;
+		int increasedRange = 1;
+		List<Node> nearDestructibleWall = grid.GetNeighbours (aiNode, increasedRange, true);
 
-	//----------------------------------------BEHAVIORS------------------------------------------------------
-	private void AvoidBombs(Node aiNode,List<Node> bombs,List<Node> visitedNodes){
-		List<Node> rangeOfBombs = new List<Node> (); 
-
-		foreach (Node n in bombs) {
-			List<Node> rangeOfBomb = grid.GetNeighbours (n, bombScript.bombRange);
-			rangeOfBomb.Add (n);
-			rangeOfBombs.AddRange (rangeOfBomb);
+		//Evaluate nearest destructible wall
+		while (doneEvaluate == false) {
+			nearDestructibleWall.RemoveAll(x => x.destructible == false);
+			if (nearDestructibleWall.Count > 0)
+				doneEvaluate = true;
+			else 
+				nearDestructibleWall = grid.GetNeighbours (aiNode, ++increasedRange, true, true);
 		}
-		visitedNodes.RemoveAll(x => rangeOfBombs.Contains(x));
+		return nearDestructibleWall.Last ();
+	}
+
+	private void DestroyDestructibleWall(Node destructibleWall){
+		List<Node> neighbours = grid.GetNeighbours (destructibleWall);
+		List<Node> bombDropPosition = accesibleTiles.Intersect (neighbours).ToList();
+
+		PathRequestManager.ShortestPath (new ShortestPathRequest (aiNode, bombDropPosition, FoundShortestPath));
+		PathRequestManager.RequestPath (new PathRequest (aiNode, shortestPath, OnPathFound));
+	}
+
+	private void AvoidBombs(){
+		List<Node> safeZones = accesibleTiles.Where (p => p.isDropRange == false).ToList();
 
 		int increasedRange = 1;
 		bool doneEvaluate = false;
 		List<Node> evaluatedSafeZone = grid.GetNeighbours (aiNode, increasedRange, true);
 
 		//Nothing to hide
-		if (visitedNodes.Count < 1) {
+		if (accesibleTiles.Count < 1)
 			return;
-		}
+		
 
 		//Evaluate safe zone and find the shortest path node to hide
 		while (doneEvaluate == false) {
-			if (increasedRange == 10)
-				doneEvaluate = true;
-			evaluatedSafeZone.RemoveAll(x => !visitedNodes.Contains(x));
+			evaluatedSafeZone.RemoveAll(x => !safeZones.Contains(x));
 			if (evaluatedSafeZone.Count > 0)
 				doneEvaluate = true;
-			else {
+			else 
 				evaluatedSafeZone = grid.GetNeighbours (aiNode, ++increasedRange, true, true);
-			}
 		}
 
-		countPathFound = evaluatedSafeZone.Count;
 
-		//Find path for all safe zone
-		foreach(Node n in evaluatedSafeZone)
-			PathRequestManager.RequestPath (new PathRequest (transform.position, n.worldPosition, OnPathFound));
-
+//		countPathFound = evaluatedSafeZone.Count;
+//
+//		//Find path for all safe zone
+//		foreach(Node n in evaluatedSafeZone)
+//			PathRequestManager.RequestPath (new PathRequest (transform.position, n.worldPosition, OnPathFound));
+//
 	}
-	//----------------------------------------BEHAVIORS------------------------------------------------------
-
-	//----------------------------------------PATHFINDING----------------------------------------------------
+		
 	public void OnPathFound(Vector3[] newPath,bool pathSuccessful){
 		if (pathSuccessful) {
-			minWaypoint = newPath;
-			if (minWaypoint == null)
-				minWaypoint = newPath;
-			else {
-				if (newPath.Length < minWaypoint.Length)
-					minWaypoint = newPath;
-			}
-			countPathFound--;
+			path = newPath;
+			StopCoroutine("FollowPath");
+			StartCoroutine ("FollowPath");
 		}
 	}
 
 	IEnumerator FollowPath(){
-		Vector3 currentWaypoint = minWaypoint [0];
+		Vector3 currentWaypoint = path [0];
+		currentWaypoint.y = 1f;
 
 		while (true) {
 			if (transform.position == currentWaypoint) {
 				targetIndex++;
-				if (targetIndex >= minWaypoint.Length) {
-					search = true;
+				if (targetIndex >= path.Length) {
+					agent.DropBomb ();	
 					yield break;
 				}
-				currentWaypoint = minWaypoint [targetIndex];
+				path [targetIndex].y = 1f;
+				currentWaypoint = path [targetIndex];
 			}
 			transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
 			UpdateAnimationMovement (transform.position,currentWaypoint);
@@ -181,16 +200,23 @@ public class AI : MonoBehaviour {
 		}
 	}
 
-	//----------------------------------------PATHFINDING----------------------------------------------------
-
-
 	public void OnDrawGizmos(){
-//		if (path != null) {
-//			for (int i = targetIndex; i < path.Length; i++) {
-//				Gizmos.color = Color.black;
-//				Gizmos.DrawCube (path [i], Vector3.one);
-//			}
-//		}
+
+
+		if (visual != null && search == true) {
+			foreach (Node n in visual) {
+				Gizmos.color = Color.cyan;
+				Gizmos.DrawCube (n.worldPosition, Vector3.one * (grid.nodeDiameter - .1f));
+			}
+		}
+
+		if (path != null) {
+			for (int i = targetIndex; i < path.Length; i++) {
+				Gizmos.color = Color.black;
+				Gizmos.DrawCube (path[i], Vector3.one * (grid.nodeDiameter - .1f));
+			}
+		}
+
 	}
 
 }

@@ -27,12 +27,23 @@ public class PathRequestManager : MonoBehaviour {
 			}
 		}
 	}
-
+		
 	public static void RequestPath(PathRequest request){
 		ThreadStart threadStart = delegate {
 			instance.pathfinding.FindPath (request, instance.FinishedProcessingPath);
 		};
 		threadStart.Invoke ();
+	}
+
+	public static void ShortestPath(ShortestPathRequest request){
+		ThreadStart threadStart = delegate {
+			instance.pathfinding.FindShortestPath (request,instance.FinishedProccessingShortestPath);
+		};
+		threadStart.Invoke ();
+	}
+
+	public void FinishedProccessingShortestPath(ShortestPathResult result){
+		result.callback (result.shortestPath);
 	}
 
 	public void FinishedProcessingPath(PathResult result){
@@ -41,6 +52,29 @@ public class PathRequestManager : MonoBehaviour {
 		}
 	}
 
+}
+
+public struct ShortestPathResult{
+	public Node shortestPath;
+	public Action<Node> callback;
+
+	public ShortestPathResult (Node shortestPath,Action<Node> callback)
+	{
+		this.shortestPath = shortestPath;
+		this.callback = callback;
+	}
+}
+
+public struct ShortestPathRequest{
+	public Node startNode;
+	public List<Node> endNodes;
+	public Action<Node> callback;
+
+	public ShortestPathRequest(Node startNode,List<Node> endNodes,Action<Node> callback){
+		this.startNode = startNode;
+		this.endNodes = endNodes;
+		this.callback = callback;
+	}
 }
 
 public struct PathResult{
@@ -57,11 +91,11 @@ public struct PathResult{
 }
 
 public struct PathRequest{
-	public Vector3 pathStart;
-	public Vector3 pathEnd;
+	public Node pathStart;
+	public Node pathEnd;
 	public Action<Vector3[], bool> callback;
 
-	public PathRequest(Vector3 _start,Vector3 _end, Action<Vector3[], bool> _callback){
+	public PathRequest(Node _start,Node _end, Action<Vector3[], bool> _callback){
 		pathStart = _start;
 		pathEnd = _end;
 		callback = _callback;
