@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class Utility{
 
@@ -14,6 +16,12 @@ public static class Utility{
 			array [x] = tempItem;
 		}
 		return array;
+	}
+
+	public static T GetRandomItemFromList<T>(List<T> list){
+		System.Random rnd = new System.Random ();
+		int randomIndex = rnd.Next (list.Count);
+		return list.ElementAt (randomIndex);
 	}
 
 	//Round x y and z to integer

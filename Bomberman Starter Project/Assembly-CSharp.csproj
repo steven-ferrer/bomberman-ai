@@ -51,10 +51,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Algorithms\AI.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\AggressiveAI.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\AI.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\FirstState.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\PathRequestManager.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\SecondState.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\StateMachine.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AStar.cs" />
      <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
-     <Compile Include="Assets\Scripts\Algorithms\PathRequestManager.cs" />
      <Compile Include="Assets\Scripts\Datastructure\Heap.cs" />
      <Compile Include="Assets\Scripts\Datastructure\Node.cs" />
      <Compile Include="Assets\Scripts\Game Environment\Agent.cs" />

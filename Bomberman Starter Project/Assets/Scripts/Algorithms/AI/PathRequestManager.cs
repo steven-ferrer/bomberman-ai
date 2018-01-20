@@ -36,10 +36,10 @@ public class PathRequestManager : MonoBehaviour {
 	}
 
 	public static void ShortestPath(ShortestPathRequest request){
-		ThreadStart threadStart = delegate {
+		//ThreadStart threadStart = delegate {
 			instance.pathfinding.FindShortestPath (request,instance.FinishedProccessingShortestPath);
-		};
-		threadStart.Invoke ();
+	//	};
+		//threadStart.Invoke ();
 	}
 
 	public void FinishedProccessingShortestPath(ShortestPathResult result){

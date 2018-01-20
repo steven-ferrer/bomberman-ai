@@ -156,18 +156,22 @@ public class GridScript : MonoBehaviour {
 	}
 
 	public List<Node> GetNeighbours(Node node){
-		return GetNeighbours (node, 1, false,false);
+		return GetNeighbours (node, 1, false,false,false);
 	}
 
 	public List<Node> GetNeighbours(Node node, int range){
-		return GetNeighbours (node, range, false,false);
+		return GetNeighbours (node, range, false,false,false);
 	}
 
 	public List<Node> GetNeighbours(Node node,int range,bool diagonal){
-		return GetNeighbours (node, range, diagonal, false);
+		return GetNeighbours (node, range, diagonal, false,false);
 	}
 
 	public List<Node> GetNeighbours(Node node,int range,bool diagonal,bool borderOnly){
+		return GetNeighbours (node, range, diagonal, borderOnly,false);
+	}
+
+	public List<Node> GetNeighbours(Node node,int range,bool diagonal,bool borderOnly,bool includeWalls){
 		List<Node> neighbours = new List<Node> ();
 		bool yCheck = false;
 
@@ -206,7 +210,7 @@ public class GridScript : MonoBehaviour {
 		} 
 			
 		//Set directions
-		if (diagonal == false) {
+		if (diagonal == false && includeWalls == false) {
 			List<Node>[] directions = new List<Node>[4]; //left,right,up,down
 			for (int x = 0; x < directions.GetLength (0); x++)
 				directions [x] = new List<Node> ();
