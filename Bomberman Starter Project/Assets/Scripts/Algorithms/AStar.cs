@@ -33,7 +33,7 @@ public class AStar : MonoBehaviour {
 
 				if (currentNode == targetNode) {
 					sw.Stop ();
-					print ("Path found: " + sw.ElapsedMilliseconds + " ms");
+					//print ("Path found: " + sw.ElapsedMilliseconds + " ms");
 					pathSuccess = true;
 					break;
 				}
@@ -41,8 +41,7 @@ public class AStar : MonoBehaviour {
 				foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
 					if (closedSet.Contains (neighbour)) {
 						continue;
-					}
-
+					} 
 					int newMovementCostToNeighbour = currentNode.gCost + GetManhattanDistance (currentNode, neighbour);
 					if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains (neighbour)) {
 						neighbour.gCost = newMovementCostToNeighbour;
@@ -68,7 +67,6 @@ public class AStar : MonoBehaviour {
 		Vector3[] waypoints = new Vector3[0];
 		int minWaypoint = -1;
 		Node shortestPath = null;
-		bool pathSuccess = false;
 
 		Node startNode = request.startNode;
 

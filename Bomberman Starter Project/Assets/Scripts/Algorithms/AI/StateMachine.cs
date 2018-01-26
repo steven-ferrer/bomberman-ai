@@ -1,14 +1,6 @@
 ﻿namespace StateStuff{
-
-    public enum StateType:int
-    {
-        FIRST_STATE = 0,
-        SECOND_STATE = 1
-    }
-
 	public class StateMachine<T>{
         public State<T> currentState { get; private set; }
-        public StateType Type { get; private set; }
 		public T Owner;
 
 		public StateMachine(T _owner){
@@ -16,11 +8,10 @@
 			currentState = null;
 		}
 
-		public void ChangeState(State<T> _newState,StateType _type){
+		public void ChangeState(State<T> _newState){
 			if(currentState != null)
 				currentState.ExitState (Owner);
 			currentState = _newState;
-            Type = _type;
 			currentState.EnterState (Owner);
 		}
 

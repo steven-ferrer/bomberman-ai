@@ -29,17 +29,15 @@ public class PathRequestManager : MonoBehaviour {
 	}
 		
 	public static void RequestPath(PathRequest request){
-		ThreadStart threadStart = delegate {
-			instance.pathfinding.FindPath (request, instance.FinishedProcessingPath);
-		};
-		threadStart.Invoke ();
+        ThreadStart threadStart = delegate
+        {
+            instance.pathfinding.FindPath(request, instance.FinishedProcessingPath);
+        };
+        threadStart.Invoke();
 	}
 
 	public static void ShortestPath(ShortestPathRequest request){
-		//ThreadStart threadStart = delegate {
-			instance.pathfinding.FindShortestPath (request,instance.FinishedProccessingShortestPath);
-	//	};
-		//threadStart.Invoke ();
+		instance.pathfinding.FindShortestPath (request,instance.FinishedProccessingShortestPath);
 	}
 
 	public void FinishedProccessingShortestPath(ShortestPathResult result){

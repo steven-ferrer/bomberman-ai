@@ -38,15 +38,19 @@ public class Agent : MonoBehaviour {
 
 		currentPos = transform.position;
 
-		if (Utility.RoundToInt (currentPos) != Utility.RoundToInt (nextPos)) { 
-			grid.UpdateAgentMoves (currentPos,nextPos,transform.gameObject.name);
-			nextPos = currentPos;
+        if (Utility.RoundToInt(currentPos) != Utility.RoundToInt(nextPos))
+        {
+            grid.UpdateAgentMoves(currentPos, nextPos, transform.gameObject.name);
+            nextPos = currentPos;
 		}
 			
 		if (agentName == GameObjectType.PLAYER.ToString ()) {
 			UpdateMovement (KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
-			UpdateMovement (KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
-		}
+        }
+        else if (agentName == GameObjectType.AGGRESSIVE_AI.ToString())
+        {
+            UpdateMovement(KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
+        }
     }
 
 	private void UpdateMovement(KeyCode up, KeyCode down, KeyCode right, KeyCode left, KeyCode dropBomb) {

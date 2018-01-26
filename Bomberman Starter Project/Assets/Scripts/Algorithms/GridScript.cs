@@ -13,7 +13,7 @@ public class GridScript : MonoBehaviour {
 	public float nodeRaduis;
 
 	Node[,] grid;
-	public float nodeDiameter;
+	float nodeDiameter;
 	int gridSizeX,gridSizeY;
 
 	private bool isCreated = false;
@@ -116,13 +116,33 @@ public class GridScript : MonoBehaviour {
 
 		yield return new WaitForSeconds (.05f);
 	}
+
+    IEnumerator UpdateBombTimeExplosion(int x,int y)
+    {
+        float count = bombScript.timeToExplode;
+
+        while (grid[x,y].count != 0f)
+        {
+            List<Node> explosionRange = GetNeighbours(grid[x, y], bombScript.bombRange);
+            grid[x, y].count = count;
+            foreach (Node n in explosionRange)
+            {           
+                grid[n.gridX, n.gridY].count = count;
+            }
+            count = count - 1f; 
+            print(count);
+            yield return new WaitForSeconds(1f);
+        }
+
+    }
 		
 	private void UpdateBombs(){
 		if (GridScript.Dropped_Bombs.Count > 0) {
 			foreach (Vector3 pos in GridScript.Dropped_Bombs) {
 				Node bomb = NodeFromWorldPoint (pos);
 				grid [bomb.gridX, bomb.gridY].isBomb = true;
-				grid [bomb.gridX, bomb.gridY].walkable = false;
+                grid[bomb.gridX, bomb.gridY].walkable = false;
+                StartCoroutine(UpdateBombTimeExplosion(bomb.gridX, bomb.gridY));
 				StartCoroutine (UpdateExplosion (bomb,true));
 			}
 			GridScript.Dropped_Bombs.Clear ();
@@ -132,7 +152,7 @@ public class GridScript : MonoBehaviour {
 			foreach (Vector3 pos in GridScript.Exploded_Bombs) {
 				Node bomb = NodeFromWorldPoint (pos);
 				grid [bomb.gridX, bomb.gridY].isBomb = false;
-				grid [bomb.gridX, bomb.gridY].walkable = true;
+                grid[bomb.gridX, bomb.gridY].walkable = true;
 				StartCoroutine (UpdateExplosion (bomb,false));
 			}
 			GridScript.Exploded_Bombs.Clear ();
@@ -143,16 +163,15 @@ public class GridScript : MonoBehaviour {
 		Node currentNode = NodeFromWorldPoint (Utility.RoundToInt(current));
 		Node nextNode = NodeFromWorldPoint (Utility.RoundToInt(next));
 
-		if (next == Vector3.zero) {
-			grid [currentNode.gridX, currentNode.gridY].agentName = agentName;
-		} else {
-			grid [currentNode.gridX, currentNode.gridY].agentName = agentName;
-			grid [nextNode.gridX, nextNode.gridY].agentName = null;
-		}
-	}
-
-	public static void DestroyDestructible(Vector3 position){
-		print (position.ToString ());
+        if (next == Vector3.zero)
+        {
+            grid[currentNode.gridX, currentNode.gridY].agentName = agentName;
+        }
+        else
+        {
+            grid[currentNode.gridX, currentNode.gridY].agentName = agentName;
+            grid[nextNode.gridX, nextNode.gridY].agentName = null;
+        }
 	}
 
 	public List<Node> GetNeighbours(Node node){
@@ -255,6 +274,29 @@ public class GridScript : MonoBehaviour {
 		}
 		return neighbours;
 	}
+
+    public List<Node> GetAccessibleTiles(Node startNode)
+    {
+        List<Node> visitedNodes = new List<Node>();
+        Stack<Node> stack = new Stack<Node>();
+        stack.Push(startNode);
+        while (stack.Count > 0)
+        {
+            Node node = stack.Pop();
+            if (!visitedNodes.Contains(node))
+            {
+                visitedNodes.Add(node);
+
+                List<Node> neighbours = GetNeighbours(node);
+                foreach (Node n in neighbours)
+                {
+                    if (!visitedNodes.Contains(n))
+                        stack.Push(n);
+                }
+            }
+        }
+        return visitedNodes;
+    }
 		
 	public Node NodeFromWorldPoint(Vector3 worldPosition){
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
