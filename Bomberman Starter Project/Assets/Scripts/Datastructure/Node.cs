@@ -16,7 +16,7 @@ public class Node : IHeapItem<Node> {
 
 	public bool isBomb = false;
 	public string agentName = null;
-	public bool isBombRange = false;
+	public bool isOverlap = false;
 	public bool isDropRange = false;
 
     public float count;

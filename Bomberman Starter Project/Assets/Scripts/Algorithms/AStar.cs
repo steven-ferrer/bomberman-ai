@@ -6,11 +6,7 @@ using System;
 
 public class AStar : MonoBehaviour {
 
-	GridScript grid;
-
-	void Awake(){
-		grid = GetComponent<GridScript> ();
-	}
+	public GridScript grid;
 
 	public void FindPath(PathRequest request,Action<PathResult> callback){
 		Stopwatch sw = new Stopwatch ();

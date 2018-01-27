@@ -36,7 +36,7 @@ public class AI : MonoBehaviour
     private void Start()
     {
         stateMachine = new StateMachine<AI>(this);
-        Invoke("StartState", 2f);
+        //Invoke("StartState", 2f);
     }
 
     private void StartState()

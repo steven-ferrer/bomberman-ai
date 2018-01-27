@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{C5008563-D55E-C0E1-37E1-70E17A1C7E70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -52,58 +51,58 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Algorithms\AI\AI.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\AvoidingBombs.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\ExploringMap.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\PathRequestManager.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\Searching.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\StateMachine.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AI\Tracking.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\AStar.cs" />
-    <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
-    <Compile Include="Assets\Scripts\Datastructure\Heap.cs" />
-    <Compile Include="Assets\Scripts\Datastructure\Node.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\Agent.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\Bomb.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\DestroySelf.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\DisableTriggerOnAgentExit.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\GameObjectType.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\GlobalStateManager.cs" />
-    <Compile Include="Assets\Scripts\Game Environment\MapGenerator.cs" />
-    <Compile Include="Assets\Scripts\Utility.cs" />
-    <Reference Include="UnityEngine.UI">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Timeline">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIAutomation">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.GoogleAudioSpatializer">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.HoloLens">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.SpatialTracking">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Analytics">
-      <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
-    </Reference>
+     <Compile Include="Assets\Scripts\Algorithms\AI\AI.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\AvoidingBombs.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\ExploringMap.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\PathRequestManager.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\Searching.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\StateMachine.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\Tracking.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AStar.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
+     <Compile Include="Assets\Scripts\Datastructure\Heap.cs" />
+     <Compile Include="Assets\Scripts\Datastructure\Node.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\Agent.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\Bomb.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\DestroySelf.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\DisableTriggerOnAgentExit.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\GameObjectType.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\GlobalStateManager.cs" />
+     <Compile Include="Assets\Scripts\Game Environment\MapGenerator.cs" />
+     <Compile Include="Assets\Scripts\Utility.cs" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Networking">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.TestRunner">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.framework">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Timeline">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UIAutomation">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.GoogleAudioSpatializer">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.HoloLens">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.SpatialTracking">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>C:/Users/-Shadow-/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -113,4 +112,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>

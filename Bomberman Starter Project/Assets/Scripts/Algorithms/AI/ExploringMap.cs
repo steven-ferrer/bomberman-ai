@@ -11,6 +11,10 @@ public class ExploringMap : State<AI>
     private AI owner;
     private Vector3[] path;
 
+    private Queue<Node> bombPositions = new Queue<Node>();
+
+    private const int PLACING_POSITIONS_LIMIT = 6; //how many positions to search where to place the bombs
+
     private ExploringMap()
     {
         if (_instance != null)
@@ -36,7 +40,13 @@ public class ExploringMap : State<AI>
     {
         owner = _owner;
         Debug.Log("Start exploring the map...");
-        _owner.StartCoroutine(this.PlaceBomb());
+
+        //InitializeBombPositions();
+
+        //foreach (Node n in bombPositions)
+        //    Debug.Log(n.gridX + "," + n.gridY);
+        //_owner.StartCoroutine(this.PlaceBomb());
+
     }
 
     public override void ExitState(AI _owner)
@@ -62,7 +72,7 @@ public class ExploringMap : State<AI>
     private IEnumerator PlaceBomb()
     {
         yield return new WaitForSeconds(0.5f);
-        List<Node> bombPositions = GetBombPositions();
+        InitializeBombPositions();
         if (bombPositions.Count > 0)
         {
             foreach (Node bombPosition in bombPositions)
@@ -77,7 +87,8 @@ public class ExploringMap : State<AI>
                     }
 
                     Debug.Log("place bomb to " + bombPosition.gridX + "," + bombPosition.gridY);
-                    owner.WalkTo(bombPosition, DoneWalking);
+
+                    //owner.WalkTo(bombPosition, DoneWalking);
                     yield break;
                 }
             }
@@ -90,18 +101,35 @@ public class ExploringMap : State<AI>
         owner.stateMachine.ChangeState(Searching.Instance);
     }
 
-    private List<Node> GetBombPositions()
+    private void InitializeBombPositions()
     {
-        List<Node> bombPositions = new List<Node>();
+        bombPositions.Clear();
         foreach (Node node in owner.accessibleTiles)
         {
+            if (bombPositions.Count >= PLACING_POSITIONS_LIMIT)
+                break;
             List<Node> neighbours = owner.grid.GetNeighbours(node, 1, false, false, true);
             if (neighbours.Any(x => (x.walkable == false && x.destructible == true)))
             {
-                bombPositions.Add(node);
+                Debug.Log("bomb: " + node.gridX + "," + node.gridY);
+                neighbours = owner.grid.GetDestructibleWallNeighbours(node, owner.bombScript.bombRange);
+                //bombPositions.Enqueue(node);
+                foreach (Node n in neighbours)
+                {
+                    if(n.destructible)
+                        Debug.Log("neighbours: " + n.gridX + "," + n.gridY);
+                }
             }
         }
-        return bombPositions;
+    }
+
+    private Node GetOptimizedPosition(Node bombPosition)
+    {
+        //7,1
+        //6,1
+
+
+        return null;
     }
 
     private bool IsSafeToPlaceTheBomb(Node bombPosition)

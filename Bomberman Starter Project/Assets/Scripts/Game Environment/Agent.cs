@@ -98,8 +98,7 @@ public class Agent : MonoBehaviour {
 						return;
 					}
 				}
-				GridScript.Dropped_Bombs.Add (dropPosition);
-				Instantiate (bombPrefab, dropPosition, bombPrefab.transform.rotation);
+			  Instantiate (bombPrefab, dropPosition, bombPrefab.transform.rotation);
 			}
 			dropBomb = 0;
         }
