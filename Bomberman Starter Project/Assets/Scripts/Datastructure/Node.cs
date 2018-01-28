@@ -17,9 +17,30 @@ public class Node : IHeapItem<Node> {
 	public bool isBomb = false;
 	public string agentName = null;
 	public bool isOverlap = false;
-	public bool isDropRange = false;
+  public float count;
+  private List<DropRange> dropList = new List<DropRange>();
 
-    public float count;
+  public void addDropRange(DropRange dropRange)
+  {
+      if (!dropList.Contains(dropRange))
+      {
+          dropList.Add(dropRange);
+      }
+  }
+
+  public void RemoveDropRange(Node bomb)
+  {
+      if (dropList.Count > 0)
+      {
+          dropList.RemoveAll(x => x.parentBomb == bomb);
+      }
+  }
+
+  public int GetDropRangeCount()
+  {
+      return dropList.Count;
+  }
+  
 
 	public Node(bool walkable,bool destructible, Vector3 worldPosition,int gridX, int gridY){
 		this.walkable = walkable;
@@ -51,4 +72,16 @@ public class Node : IHeapItem<Node> {
 		}
 		return -compare;
 	}
+}
+
+public struct DropRange
+{
+    public Node parentBomb;
+    public int countDown;
+
+    public DropRange(Node _parentBomb, int _countDown)
+    {
+        parentBomb = _parentBomb;
+        countDown = _countDown;
+    }
 }

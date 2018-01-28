@@ -37,7 +37,7 @@ public class AvoidingBombs : State<AI>
         owner = _owner;
         Debug.Log("Avoiding the bombs");
         List<Node> safeNodes = new List<Node>(owner.accessibleTiles);
-        safeNodes.RemoveAll(n => n.isDropRange == true);
+        safeNodes.RemoveAll(n => n.GetDropRangeCount() > 0);
         PathRequestManager.ShortestPath(new ShortestPathRequest(owner.aiNode, safeNodes, FoundShortestPath));
         Debug.Log("Walk to safe node: " + shortestPath.gridX + "," + shortestPath.gridY);
         if (shortestPath != _owner.aiNode)
