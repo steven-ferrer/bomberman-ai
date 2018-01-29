@@ -31,6 +31,7 @@ public class GridScript : MonoBehaviour
     private int gridSizeX, gridSizeY;
     private Vector2 gridWorldSize;
     private bool isCreated = false;
+    public int bombRange { set; private get; }
 
     public int MaxSize
     {
@@ -111,12 +112,7 @@ public class GridScript : MonoBehaviour
             print("Grid is already Created");
     }
 
-    public void UpdateGrid(GameObjectType objectType, Vector3 position, bool enable)
-    {
-        UpdateGrid(objectType, position, enable, 1);
-    }
-
-    public void UpdateGrid(GameObjectType objectType,Vector3 position,bool enable,int bombRange)
+    public void UpdateGrid(GameObjectType objectType,Vector3 position,bool enable)
     {
         Node node = NodeFromWorldPoint(position);
         if (objectType == GameObjectType.BOMB)
@@ -382,21 +378,27 @@ public class GridScript : MonoBehaviour
 
     public List<Node> GetAccessibleTiles(Node startNode)
     {
-        List<Node> visitedNodes = new List<Node>();
-        Stack<Node> stack = new Stack<Node>();
-        stack.Push(startNode);
-        while (stack.Count > 0)
-        {
-            Node node = stack.Pop();
-            if (!visitedNodes.Contains(node))
-            {
-                visitedNodes.Add(node);
+        return GetAccessibleTiles(startNode, 0);
+    }
 
-                List<Node> neighbours = GetNeighbours(node);
-                foreach (Node n in neighbours)
+    public List<Node> GetAccessibleTiles(Node startNode,int limit)
+    {
+        //BREATH FIRST SEARCH
+        List<Node> visitedNodes = new List<Node>();
+        Queue<Node> queue = new Queue<Node>();
+        visitedNodes.Add(startNode);
+        queue.Enqueue(startNode);
+
+        while (queue.Count > 0)
+        {
+            Node node = queue.Dequeue();
+            List<Node> neighbours = GetNeighbours(node);
+            foreach (Node n in neighbours)
+            {
+                if (!visitedNodes.Contains(n))
                 {
-                    if (!visitedNodes.Contains(n))
-                        stack.Push(n);
+                    visitedNodes.Add(n);
+                    queue.Enqueue(n);
                 }
             }
         }

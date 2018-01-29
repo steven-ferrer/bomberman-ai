@@ -19,13 +19,30 @@ public class AI : MonoBehaviour
     private Animator animator;
     private bool walking = false;
     private float delayUpdate = 1f;
-
     private bool doneFollowThePath = false;
 
     public List<Node> accessibleTiles { set; get; }
     public Node aiNode { set; get; }
+    public bool isAvoidingTheBombs { set; get; }
+
+    public Node visualBombPosition;
+    public Node visualSafePosition;
 
     Action<bool> callbackWalking;
+
+    public void OnDrawGizmos()
+    {
+        if (visualBombPosition != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(visualBombPosition.worldPosition, Vector3.one);
+        }
+        if (visualSafePosition != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(visualBombPosition.worldPosition, Vector3.one);
+        }
+    }
 
     private void Awake()
     {
@@ -51,7 +68,23 @@ public class AI : MonoBehaviour
             walking = false;
             animator.SetBool("Walking", walking);
         }
+
+        aiNode = grid.NodeFromWorldPoint(transform.position);
+        accessibleTiles = grid.GetAccessibleTiles(aiNode);
+        CheckIfInDanger();
         stateMachine.Update();
+    }
+
+    private void CheckIfInDanger()
+    {
+        if (!isAvoidingTheBombs)
+        {
+            if (aiNode.GetDropRangeCount() > 0 || aiNode.isBomb) //In range of bomb
+            {
+                isAvoidingTheBombs = true;
+                stateMachine.ChangeState(AvoidingBombs.Instance);
+            }
+        }
     }
 
     public void WalkTo(Node destination,Action<bool> callbackWalking)
@@ -80,7 +113,6 @@ public class AI : MonoBehaviour
         Vector3 currentWaypoint = path[0];
         currentWaypoint.y = 1f;
         doneFollowThePath = false;
-
         Debug.Log("Start walking...");
 
         while (true)
@@ -97,6 +129,7 @@ public class AI : MonoBehaviour
                 currentWaypoint = path[targetIndex];
             }
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            walking = true;
             UpdateAnimationMovement(transform.position, currentWaypoint);
             yield return null;
         }
@@ -126,13 +159,11 @@ public class AI : MonoBehaviour
             if (nextPos.x < currentPos.x)
             {
                 transform.rotation = Quaternion.Euler(0, 270, 0); //Up
-                walking = true;
                 animator.SetBool("Walking", walking);
             }
             else
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0); //Down
-                walking = true;
                 animator.SetBool("Walking", walking);
             }
         }
@@ -141,30 +172,15 @@ public class AI : MonoBehaviour
             if (nextPos.z > currentPos.z)
             {
                 transform.rotation = Quaternion.Euler(0, 0, 0); //right
-                walking = true;
                 animator.SetBool("Walking", walking);
             }
             else
             {
                 transform.rotation = Quaternion.Euler(0, 180, 0); //left
-                walking = true;
                 animator.SetBool("Walking", walking);
             }
         }
     }
-
-    public void OnDrawGizmos()
-    {
-        //if (path != null)
-        //{
-        //    for (int i = targetIndex; i < path.Length; i++)
-        //    {
-        //        Gizmos.color = Color.black;
-        //        Gizmos.DrawCube(path[i], Vector3.one * (grid.nodeDiameter - .1f));
-        //    }
-        //}
-    }
-
 
 
 }

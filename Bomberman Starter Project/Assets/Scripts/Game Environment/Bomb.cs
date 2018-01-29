@@ -22,8 +22,9 @@ public class Bomb : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        grid.bombRange = bombRange;
         Invoke("Explode", timeToExplode);
-        grid.UpdateGrid(GameObjectType.BOMB,transform.position, true,bombRange);
+        grid.UpdateGrid(GameObjectType.BOMB,transform.position, true);
     }
 
     public void SetGridScript(GridScript grid)
@@ -39,7 +40,7 @@ public class Bomb : MonoBehaviour
             audioSource.PlayOneShot(soundExplosion, 0.7F);
             chainReaction = true;
         }
-        grid.UpdateGrid(GameObjectType.BOMB, transform.position, false, bombRange);
+        grid.UpdateGrid(GameObjectType.BOMB, transform.position, false);
         StartCoroutine(CreateExplosions(Vector3.forward));
         StartCoroutine(CreateExplosions(Vector3.right));
         StartCoroutine(CreateExplosions(Vector3.back));
@@ -67,7 +68,7 @@ public class Bomb : MonoBehaviour
                 if (hit.collider.CompareTag(GameObjectType.DESTRUCTIBLE_WALL.GetTag()))
                 {
                     Destroy(hit.transform.gameObject);
-                    grid.UpdateGrid(GameObjectType.DESTRUCTIBLE_WALL, hit.transform.position, false,bombRange);
+                    grid.UpdateGrid(GameObjectType.DESTRUCTIBLE_WALL, hit.transform.position, false);
                     yield break;
                 }
             }

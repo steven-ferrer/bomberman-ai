@@ -34,28 +34,19 @@ public class Searching : State<AI>
     public override void EnterState(AI _owner)
     {
         Debug.Log("Start searching...");
-    }
-
-    public override void ExitState(AI _owner)
-    {
-        Debug.Log("Exit searching...");
-    }
-
-    public override void UpdateState(AI _owner)
-    {
         _owner.aiNode = _owner.grid.NodeFromWorldPoint(_owner.transform.position);
         _owner.accessibleTiles = _owner.grid.GetAccessibleTiles(_owner.aiNode);
-        if (_owner.accessibleTiles.Any(v => (v.isBomb == true)))
+        if (_owner.accessibleTiles.Any(v => v.agentName != null && v.agentName != _owner.transform.name))
+        {
+            Debug.Log("Enemy found.");
+        }
+        else if (_owner.accessibleTiles.Any(v => (v.isBomb == true)))
         {
             if (_owner.stateMachine.currentState != AvoidingBombs.Instance)
             {
                 Debug.Log("Bomb found.");
                 _owner.stateMachine.ChangeState(AvoidingBombs.Instance);
             }
-        }
-        else if (_owner.accessibleTiles.Any(v => v.agentName != null && v.agentName != _owner.transform.name))
-        {
-
         }
         else
         {
@@ -65,5 +56,15 @@ public class Searching : State<AI>
                 _owner.stateMachine.ChangeState(ExploringMap.Instance);
             }
         }
+    }
+
+    public override void ExitState(AI _owner)
+    {
+        Debug.Log("Exit searching...");
+    }
+
+    public override void UpdateState(AI _owner)
+    {
+        
     }
 }

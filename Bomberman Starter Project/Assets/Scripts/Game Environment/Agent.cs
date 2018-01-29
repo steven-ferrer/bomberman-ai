@@ -47,11 +47,11 @@ public class Agent : MonoBehaviour
 
         if (transform.name == GameObjectType.PLAYER.ToString())
         {
-            UpdateMovement(KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
+            UpdateMovement(KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
         }
         else if (transform.name == GameObjectType.AGGRESSIVE_AI.ToString())
         {
-            UpdateMovement(KeyCode.W, KeyCode.S, KeyCode.D, KeyCode.A, KeyCode.Space);
+            UpdateMovement(KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Return);
         }
     }
 

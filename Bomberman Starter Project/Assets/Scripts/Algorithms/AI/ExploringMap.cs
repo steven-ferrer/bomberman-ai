@@ -4,16 +4,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+public struct BombPosition
+{
+    public Node bomb;
+    public int destructibleNeighbourCount;
+
+    public BombPosition(Node _bomb, int _destructibleNeighbourCount)
+    {
+        bomb = _bomb;
+        destructibleNeighbourCount = _destructibleNeighbourCount;
+    }
+}
+
 public class ExploringMap : State<AI>
 {
     private static ExploringMap _instance;
-
     private AI owner;
     private Vector3[] path;
-
     private List<BombPosition> bombPositions = new List<BombPosition>();
-
-    private const int PLACING_POSITIONS_LIMIT = 6; //how many positions to search where to place the bombs
+    private const int PLACING_POSITIONS_LIMIT = 5; //how many positions to search where to place the bombs
 
     private ExploringMap()
     {
@@ -53,48 +62,24 @@ public class ExploringMap : State<AI>
 
     public override void UpdateState(AI _owner)
     {
-        //_owner.aiNode = _owner.grid.NodeFromWorldPoint(_owner.transform.position);
-        //_owner.accessibleTiles = _owner.grid.GetAccessibleTiles(_owner.aiNode);
-    } 
 
-    public void DoneWalking(bool success)
-    {
-        if (success)
-        {
-            Debug.Log("Done walking!");
-            owner.agent.DropBomb();
-            //owner.StartCoroutine(this.Search());
-        }
     }
 
-    private IEnumerator PlaceBomb()
+    private bool IsSafeToPlaceTheBomb(Node bombPosition)
     {
-        yield return new WaitForSeconds(0.5f);
-        if (bombPositions.Count > 0)
+        List<Node> bombRange = owner.grid.GetNeighbours(bombPosition, owner.bombScript.bombRange);
+        bombRange.Add(bombPosition);
+
+        foreach (Node node in owner.accessibleTiles)
         {
-            foreach (BombPosition bombPosition in bombPositions)
-            {
-                if (IsSafeToPlaceTheBomb(bombPosition.bomb))
-                {
-                    if (bombPosition.bomb == owner.aiNode)
-                    {
-                        owner.agent.DropBomb();
-                        owner.StartCoroutine(this.Search());
-                        yield break;
-                    }
+            if (node.GetDropRangeCount() > 0)
+                continue;
+            if (bombRange.Contains(node))
+                continue;
 
-                    Debug.Log("place bomb to " + bombPosition.bomb.gridX + "," + bombPosition.bomb.gridY);
-                    owner.WalkTo(bombPosition.bomb, DoneWalking);
-                    yield break; //for now in it can place only one bomb to destruct the walls
-                }
-            }
+            return true;
         }
-    }
-
-    private IEnumerator Search()
-    {
-        yield return new WaitForSeconds(0.1f);
-        owner.stateMachine.ChangeState(Searching.Instance);
+        return false;
     }
 
     private void InitializeBombPositions()
@@ -108,6 +93,7 @@ public class ExploringMap : State<AI>
             if (neighbours.Any(x => (x.walkable == false && x.destructible == true)))
             {
                 int count = 0;
+
                 foreach (Node n in neighbours)
                 {
                     if (n.destructible)
@@ -116,47 +102,58 @@ public class ExploringMap : State<AI>
                 bombPositions.Add(new BombPosition(node, count));
             }
         }
-        bombPositions = bombPositions.OrderByDescending(o => o.destructibleNeighbourCount).ToList();
     }
 
-    private Node GetOptimizedPosition(Node bombPosition)
+    private IEnumerator PlaceBomb()
     {
-
-        return null;
-    }
-
-    private bool IsSafeToPlaceTheBomb(Node bombPosition)
-    {
-        List<Node> bombRange = owner.grid.GetNeighbours(bombPosition, owner.bombScript.bombRange);
-        List<Node> safeNodes = new List<Node>();
-        bombRange.Add(bombPosition);
-
-        foreach (Node node in owner.accessibleTiles)
+        yield return new WaitForSeconds(0.5f);
+        if (bombPositions.Count > 0)
         {
-            if (node.GetDropRangeCount() > 0)
-                continue;
-            if (bombRange.Contains(node))
-                continue;
+            bombPositions.RemoveAll(x => !IsSafeToPlaceTheBomb(x.bomb));
+            foreach (BombPosition bombPosition in bombPositions)
+            {
+                Node bombPos = bombPosition.bomb;
+                if (((bombPosition.bomb.gridX % 2) == 0) || ((bombPosition.bomb.gridY % 2) == 0))
+                {
+                    bombPos = owner.grid.GetNeighbours(bombPosition.bomb).Find(x => x.walkable == true);
+                    if (!IsSafeToPlaceTheBomb(bombPos))
+                    {
+                        bombPos = bombPosition.bomb;
+                    }
+                }
 
-            safeNodes.Add(node);
-        }
+                Debug.Log("place bomb to " + bombPos.gridX + "," + bombPos.gridY);
+                owner.visualBombPosition = bombPos;
 
-        if (safeNodes.Count > 0)
-            return true;
-        else
-            return false;
-    }
+                if (bombPos == owner.aiNode)
+                {
+                    owner.agent.DropBomb();
+                    owner.StartCoroutine(this.AvoidBomb());
+                    yield break;
+                }
 
-    private struct BombPosition
-    {
-        public Node bomb;
-        public int destructibleNeighbourCount;
-
-        public BombPosition(Node _bomb, int _destructibleNeighbourCount)
-        {
-            bomb = _bomb;
-            destructibleNeighbourCount = _destructibleNeighbourCount;
+                owner.WalkTo(bombPos, DoneWalking);
+                yield break; //for now on it can place only one bomb to destroy the walls
+            }
         }
     }
+
+    public void DoneWalking(bool success)
+    {
+        if (success)
+        {
+            Debug.Log("Done walking!");
+            owner.agent.DropBomb();
+            owner.visualBombPosition = null;
+            owner.StartCoroutine(this.AvoidBomb());
+        }
+    }
+
+    private IEnumerator AvoidBomb()
+    {
+        yield return new WaitForSeconds(0.1f);
+        owner.stateMachine.ChangeState(AvoidingBombs.Instance);
+    }
+
 
 }
