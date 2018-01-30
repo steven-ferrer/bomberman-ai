@@ -1,0 +1,71 @@
+Genetic Algorithm Youtube Playlist
+https://www.youtube.com/watch?v=9zfeTw-uFCw&list=PLRqwX-V7Uu6bJM3VgzjNV5YxVxUwzALHV
+
+Bomberman as an Artificial Intelligence Platform
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiz78y49rXXAhVSPrwKHXG_DA0QFgguMAA&url=https%3A%2F%2Fsigarra.up.pt%2Fflup%2Fpt%2Fpub_geral.show_file%3Fpi_gdoc_id%3D861067&usg=AOvVaw1ZyZoOhaStSvsSzf14Aupc
+
+bomberman AI genetic programming
+http://www.moshesipper.com/uploads/3/0/8/3/30831095/yuval_g._and_gal_b._-_evolving_agents_for_bomberman__spring_2016_.pdf
+
+AI for Bomberman *
+http://forums.winamp.com/showthread.php?t=65443
+
+AI for Bomberman
+https://www.newgrounds.com/bbs/topic/932262
+
+Different Behaviors of Bomberman AI
+https://www.scirra.com/forum/bomberman-mechanics-for-ai_t196162
+
+Spawn destructible walls
+https://answers.unity.com/questions/423663/select-randomly-x-arrays-and-instantiate-them.html
+
+A* with heuristics functions
+http://www.growingwiththeweb.com/2012/06/a-pathfinding-algorithm.html
+
+Manhattan Distance
+http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#S7
+
+AI Simple Bomberman Game
+https://www.gamedev.net/forums/topic/622051-ai-for-simple-bomberman-game/
+
+Name of Bomberman Algorithm
+https://cs.stackexchange.com/questions/45312/name-of-bomberman-algorithm
+
+Game Programming Algorithms (A* algorithm)
+http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html#the-a-star-algorithm
+
+Bomberman AI (Long post, discussion)
+https://www.gamedev.net/forums/topic/319837-bomberman-ai-warning---long-post/
+
+How to make Bomberman Platform (UNITY 3D)
+https://www.raywenderlich.com/125559/make-game-like-bomberman
+
+An Improved Pathfinding Algorithm in RTS Games
+https://link.springer.com/chapter/10.1007/978-3-642-21411-0_1
+
+Monte carlo tree search
+http://www.cameronius.com/research/mcts/about/index.html
+
+AI for real-time strategy games
+https://www.itu.dk/image/edu/theses/pdf/AndersWalther06.pdf
+
+References
+http://www.theesa.com/article/video-game-courses-degrees-u-s-increase-50-five-years-2/
+
+https://challenge.entelect.co.za/
+
+Noob Bomberman ai
+https://www.youtube.com/watch?v=QorQQVG8pFI
+
+UWCS bomberman programming competetion
+https://github.com/UWCS/bomberman-progcomp
+
+https://www.doc.ic.ac.uk/~nd/surprise_96/journal/vol1/hmw/article1.html
+
+http://geneticprogramming.com/about-gp/tree-based-gp/
+
+
+c# genetic programming library
+https://code.google.com/archive/p/aforge/
+
+https://www.researchgate.net/publication/239523032_Mancala_games_Topics_in_Mathemathics_and_Artificial_Intelligence
