@@ -118,6 +118,7 @@ public class GridScript : MonoBehaviour
         if (objectType == GameObjectType.BOMB)
         {
             grid[node.gridX, node.gridY].isBomb = enable;
+            grid[node.gridX, node.gridY].walkable = !enable;
             List<Node> range = GetNeighbours(node, bombRange);
             if (enable)
             {

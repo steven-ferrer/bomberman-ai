@@ -18,7 +18,7 @@ public class AStar : MonoBehaviour {
 		Node startNode = request.pathStart;
 		Node targetNode = request.pathEnd;
 
-		if (startNode.walkable && targetNode.walkable) {
+		if ((startNode.walkable && targetNode.walkable) || (!startNode.walkable && targetNode.walkable)) {
 			Heap<Node> openSet = new Heap<Node> (grid.MaxSize);
 			HashSet<Node> closedSet = new HashSet<Node> ();
 			openSet.Add (startNode);

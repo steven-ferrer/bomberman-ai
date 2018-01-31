@@ -27,6 +27,7 @@ public class AI : MonoBehaviour
 
     public Node visualBombPosition;
     public Node visualSafePosition;
+    public List<Node> visualNodes;
 
     Action<bool> callbackWalking;
 
@@ -42,6 +43,14 @@ public class AI : MonoBehaviour
             Gizmos.color = Color.cyan;
             Gizmos.DrawCube(visualBombPosition.worldPosition, Vector3.one);
         }
+        if (visualNodes != null && visualNodes.Count > 0)
+        {
+            foreach (Node node in visualNodes)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawCube(node.worldPosition, Vector3.one);
+            }
+        }
     }
 
     private void Awake()
@@ -53,12 +62,12 @@ public class AI : MonoBehaviour
     private void Start()
     {
         stateMachine = new StateMachine<AI>(this);
-        //Invoke("StartState", 2f);
+        Invoke("StartState", 2f);
     }
 
     private void StartState()
     {
-        stateMachine.ChangeState(Searching.Instance);
+        stateMachine.ChangeState(ExploringMap.Instance);
     }
 
     private void Update()

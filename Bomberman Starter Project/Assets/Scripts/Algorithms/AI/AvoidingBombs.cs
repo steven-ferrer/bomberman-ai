@@ -9,7 +9,6 @@ public class AvoidingBombs : State<AI>
     private static AvoidingBombs _instance;
     
     private AI owner;
-    private Node shortestPath;
 
     private AvoidingBombs()
     {
@@ -36,13 +35,13 @@ public class AvoidingBombs : State<AI>
     {
         owner = _owner;
         Debug.Log("Avoiding the bombs");
-        foreach (Node node in _owner.accessibleTiles)
+        foreach (Node node in owner.accessibleTiles)
         {
             if (node.GetDropRangeCount() == 0 && !node.isBomb)
             {
                 Debug.Log("Walk to safe node: " + node.gridX + "," + node.gridY);
-                _owner.visualSafePosition = node;
-                _owner.WalkTo(node, DoneWalking);
+                owner.visualSafePosition = node;
+                owner.WalkTo(node, DoneWalking);
                 break;
             }
         }
@@ -65,12 +64,8 @@ public class AvoidingBombs : State<AI>
             Debug.Log("Done walking!");
             owner.visualSafePosition = null;
             owner.isAvoidingTheBombs = false;
+            owner.stateMachine.ChangeState(Searching.Instance);
         }
-    }
-
-    private void FoundShortestPath(Node shortestPath)
-    {
-        this.shortestPath = shortestPath;
     }
 
 }
