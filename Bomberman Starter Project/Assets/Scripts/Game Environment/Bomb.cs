@@ -22,7 +22,6 @@ public class Bomb : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        grid.bombRange = bombRange;
         Invoke("Explode", timeToExplode);
         grid.UpdateGrid(GameObjectType.BOMB,transform.position, true);
     }
@@ -30,17 +29,19 @@ public class Bomb : MonoBehaviour
     public void SetGridScript(GridScript grid)
     {
         this.grid = grid;
+        this.grid.bombRange = bombRange;
+        this.grid.timeToExplode = timeToExplode;
     }
 
     void Explode()
     {
+        grid.UpdateGrid(GameObjectType.BOMB, transform.position, false);
         Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         if (chainReaction == false)
         {
             audioSource.PlayOneShot(soundExplosion, 0.7F);
             chainReaction = true;
         }
-        grid.UpdateGrid(GameObjectType.BOMB, transform.position, false);
         StartCoroutine(CreateExplosions(Vector3.forward));
         StartCoroutine(CreateExplosions(Vector3.right));
         StartCoroutine(CreateExplosions(Vector3.back));
@@ -61,14 +62,15 @@ public class Bomb : MonoBehaviour
 
             if (!hit.collider)
             {
-                Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation);
+                GameObject obj = Instantiate(explosionPrefab, transform.position + (i * direction), explosionPrefab.transform.rotation);
+                grid.UpdateBombGridExplode(obj.transform.position,transform.position);
             }
             else
             {
                 if (hit.collider.CompareTag(GameObjectType.DESTRUCTIBLE_WALL.GetTag()))
                 {
                     Destroy(hit.transform.gameObject);
-                    grid.UpdateGrid(GameObjectType.DESTRUCTIBLE_WALL, hit.transform.position, false);
+                    grid.UpdateGrid(GameObjectType.DESTRUCTIBLE_WALL, hit.transform.position,false);
                     yield break;
                 }
             }

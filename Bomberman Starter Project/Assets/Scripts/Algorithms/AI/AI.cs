@@ -18,7 +18,6 @@ public class AI : MonoBehaviour
 
     private Animator animator;
     private bool walking = false;
-    private float delayUpdate = 1f;
     private bool doneFollowThePath = false;
 
     public List<Node> accessibleTiles { set; get; }
@@ -62,7 +61,7 @@ public class AI : MonoBehaviour
     private void Start()
     {
         stateMachine = new StateMachine<AI>(this);
-        Invoke("StartState", 2f);
+        //Invoke("StartState", 2f);
     }
 
     private void StartState()
@@ -80,7 +79,7 @@ public class AI : MonoBehaviour
 
         aiNode = grid.NodeFromWorldPoint(transform.position);
         accessibleTiles = grid.GetAccessibleTiles(aiNode);
-        CheckIfInDanger();
+        //CheckIfInDanger();
         stateMachine.Update();
     }
 

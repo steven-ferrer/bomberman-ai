@@ -32,6 +32,7 @@ public class GridScript : MonoBehaviour
     private Vector2 gridWorldSize;
     private bool isCreated = false;
     public int bombRange { set; private get; }
+    public float timeToExplode { set; private get; }
 
     public int MaxSize
     {
@@ -112,42 +113,55 @@ public class GridScript : MonoBehaviour
             print("Grid is already Created");
     }
 
+    public void UpdateBombGridExplode(Vector3 position,Vector3 parent)
+    {
+        Node node = NodeFromWorldPoint(position);
+        Node nodeParent = NodeFromWorldPoint(parent);
+        grid[node.gridX, node.gridY].RemoveDropRange(nodeParent);
+    }
+
+    private List<Node> gridBombs = new List<Node>();
+    IEnumerator UpdateBombGrid(Node bomb)
+    {
+        while (true)
+        {
+            if (!gridBombs.Contains(bomb))
+                yield break;
+
+            List<Node> range = GetNeighbours(bomb, bombRange);
+            foreach(Node n in range)
+                grid[n.gridX, n.gridY].AddDropRange(new DropRange(bomb, timeToExplode, this));
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     public void UpdateGrid(GameObjectType objectType,Vector3 position,bool enable)
     {
         Node node = NodeFromWorldPoint(position);
-        if (objectType == GameObjectType.BOMB)
-        {
-            grid[node.gridX, node.gridY].isBomb = enable;
-            grid[node.gridX, node.gridY].walkable = !enable;
-            List<Node> range = GetNeighbours(node, bombRange);
-            if (enable)
-            {
-                foreach (Node n in range)
-                    n.addDropRange(new DropRange(node, 3));
-            }
-            else
-            {
-                foreach (Node n in range)
-                    n.RemoveDropRange(node);
-            }
-            
-        }
-        else if (objectType == GameObjectType.DESTRUCTIBLE_WALL)
+        if (objectType == GameObjectType.DESTRUCTIBLE_WALL)
         {
             grid[node.gridX, node.gridY].destructible = enable;
             grid[node.gridX, node.gridY].walkable = !enable;
-            List<Node> neighbours = GetNeighbours(node,bombRange,false,false,true);
-            if (neighbours.Any(x => x.isBomb == true))
+        }
+        else if (objectType == GameObjectType.BOMB)
+        {
+            grid[node.gridX, node.gridY].isBomb = enable;
+            grid[node.gridX, node.gridY].walkable = !enable;
+            if (enable)
             {
-                foreach (Node n in neighbours)
+                List<Node> range = GetNeighbours(node, bombRange);
+                foreach (Node n in range)
                 {
-                    if (n.isBomb)
-                    {
-                        List<Node> bombNodeRange = GetNeighbours(n, bombRange);
-                        foreach (Node nb in bombNodeRange)
-                            nb.addDropRange(new DropRange(n, 3));
-                    }
+                    grid[n.gridX, n.gridY].AddDropRange(new DropRange(node, timeToExplode, this));
                 }
+
+                gridBombs.Add(node);
+                StartCoroutine(this.UpdateBombGrid(node));
+            }
+            else
+            {
+                if(gridBombs.Count > 0)
+                    gridBombs.Remove(node);
             }
         }
     }

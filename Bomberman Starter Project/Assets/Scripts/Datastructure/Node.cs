@@ -2,15 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct DropRange
+public class DropRange
 {
-    public Node parentBomb;
-    public int countDown;
+    private Node parentBomb;
+    private float timeToExplode;
+    private MonoBehaviour monoBehaviour;
 
-    public DropRange(Node _parentBomb, int _countDown)
+    public DropRange(Node _parentBomb, float _timeToExplode,MonoBehaviour _monoBehaviour)
     {
         parentBomb = _parentBomb;
-        countDown = _countDown;
+        timeToExplode = _timeToExplode;
+        monoBehaviour = _monoBehaviour;
+        monoBehaviour.StartCoroutine(this.StartTimer());
+    }
+
+    IEnumerator StartTimer()
+    {
+        while (true)
+        {
+            if (this.timeToExplode == 0)
+            {
+                yield break;
+            }
+            this.timeToExplode--;
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    ~DropRange()
+    {
+        monoBehaviour.StopCoroutine(this.StartTimer());
+    }
+
+    public Node GetParentBomb()
+    {
+        return parentBomb;
+    }
+
+    public float TimeToExplode()
+    {
+        return timeToExplode;
     }
 }
 
@@ -33,7 +64,7 @@ public class Node : IHeapItem<Node>
     public float count;
     private List<DropRange> dropList = new List<DropRange>();
 
-    public void addDropRange(DropRange dropRange)
+    public void AddDropRange(DropRange dropRange)
     {
         if (!dropList.Contains(dropRange))
         {
@@ -45,7 +76,7 @@ public class Node : IHeapItem<Node>
     {
         if (dropList.Count > 0)
         {
-            dropList.RemoveAll(x => x.parentBomb == bomb);
+            dropList.RemoveAll(x => x.GetParentBomb() == bomb);
         }
     }
 
@@ -54,6 +85,10 @@ public class Node : IHeapItem<Node>
         return dropList.Count;
     }
 
+    public void ClearDropRange()
+    {
+        dropList.Clear();
+    }
 
     public Node(bool walkable, bool destructible, Vector3 worldPosition, int gridX, int gridY)
     {
