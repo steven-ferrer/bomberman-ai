@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class DropRange
 {
-    private Node parentBomb;
-    private float timeToExplode;
+    public Node parentBomb;
+    public float timeToExplode;
     private MonoBehaviour monoBehaviour;
 
     public DropRange(Node _parentBomb, float _timeToExplode,MonoBehaviour _monoBehaviour)
@@ -29,25 +30,14 @@ public class DropRange
         }
     }
 
-    ~DropRange()
+    public void StopTimer()
     {
         monoBehaviour.StopCoroutine(this.StartTimer());
-    }
-
-    public Node GetParentBomb()
-    {
-        return parentBomb;
-    }
-
-    public float TimeToExplode()
-    {
-        return timeToExplode;
     }
 }
 
 public class Node : IHeapItem<Node>
 {
-
     public bool walkable;
     public bool destructible;
     public Vector3 worldPosition;
@@ -59,16 +49,17 @@ public class Node : IHeapItem<Node>
     int heapIndex;
 
     public bool isBomb = false;
+    public float timeToExplode = 0f;
     public string agentName = null;
     public bool isOverlap = false;
     public float count;
     private List<DropRange> dropList = new List<DropRange>();
 
-    public void AddDropRange(DropRange dropRange)
+    public void AddDropRange(Node _node,float _timeToExplode,MonoBehaviour _monobehaviour)
     {
-        if (!dropList.Contains(dropRange))
+        if (!dropList.Any(x => x.parentBomb == _node))
         {
-            dropList.Add(dropRange);
+            dropList.Add(new DropRange(_node, _timeToExplode, _monobehaviour));
         }
     }
 
@@ -76,7 +67,15 @@ public class Node : IHeapItem<Node>
     {
         if (dropList.Count > 0)
         {
-            dropList.RemoveAll(x => x.GetParentBomb() == bomb);
+            foreach (DropRange drop in dropList)
+            {
+                if (drop.parentBomb == bomb)
+                {
+                    drop.StopTimer();
+                    drop.timeToExplode = 0;
+                }
+            }
+            dropList.RemoveAll(x => x.parentBomb == bomb);
         }
     }
 
@@ -88,6 +87,20 @@ public class Node : IHeapItem<Node>
     public void ClearDropRange()
     {
         dropList.Clear();
+    }
+
+    public float TimeToExplode()
+    {
+        if (dropList.Count > 0)
+        {
+            List<float> countdowns = dropList.Select(x => x.timeToExplode).ToList();
+            if (dropList.Count > 1)
+                countdowns = countdowns.OrderBy(i => i).ToList();
+
+            return countdowns.First();
+        }
+        else
+            return 0f;
     }
 
     public Node(bool walkable, bool destructible, Vector3 worldPosition, int gridX, int gridY)

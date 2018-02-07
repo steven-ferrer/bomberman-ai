@@ -130,8 +130,22 @@ public class GridScript : MonoBehaviour
 
             List<Node> range = GetNeighbours(bomb, bombRange);
             foreach(Node n in range)
-                grid[n.gridX, n.gridY].AddDropRange(new DropRange(bomb, timeToExplode, this));
+                grid[n.gridX, n.gridY].AddDropRange(bomb,timeToExplode,this);
             yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    IEnumerator UpdateBombTime(Node bomb)
+    {
+        float time = grid[bomb.gridX, bomb.gridY].timeToExplode;
+        while (true)
+        {
+            if (!gridBombs.Contains(bomb))
+                yield break;
+
+            grid[bomb.gridX, bomb.gridY].timeToExplode = time;
+            time--;
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -147,21 +161,26 @@ public class GridScript : MonoBehaviour
         {
             grid[node.gridX, node.gridY].isBomb = enable;
             grid[node.gridX, node.gridY].walkable = !enable;
+            grid[node.gridX, node.gridY].timeToExplode = timeToExplode;
             if (enable)
             {
                 List<Node> range = GetNeighbours(node, bombRange);
                 foreach (Node n in range)
                 {
-                    grid[n.gridX, n.gridY].AddDropRange(new DropRange(node, timeToExplode, this));
+                    grid[n.gridX, n.gridY].AddDropRange(node,timeToExplode,this);
                 }
 
                 gridBombs.Add(node);
                 StartCoroutine(this.UpdateBombGrid(node));
+                StartCoroutine(this.UpdateBombTime(node));
             }
             else
             {
-                if(gridBombs.Count > 0)
+                if (gridBombs.Count > 0)
+                {
+                    grid[node.gridX, node.gridY].timeToExplode = 0;
                     gridBombs.Remove(node);
+                }
             }
         }
     }

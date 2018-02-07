@@ -79,20 +79,24 @@ public class AI : MonoBehaviour
 
         aiNode = grid.NodeFromWorldPoint(transform.position);
         accessibleTiles = grid.GetAccessibleTiles(aiNode);
-        //CheckIfInDanger();
+        CheckIfInDanger();
         stateMachine.Update();
     }
 
     private void CheckIfInDanger()
     {
-        if (!isAvoidingTheBombs)
-        {
-            if (aiNode.GetDropRangeCount() > 0 || aiNode.isBomb) //In range of bomb
-            {
-                isAvoidingTheBombs = true;
-                stateMachine.ChangeState(AvoidingBombs.Instance);
-            }
-        }
+        //if (!isAvoidingTheBombs)
+        //{
+        //    if (aiNode.GetDropRangeCount() > 0 || aiNode.isBomb) //In range of bomb
+        //    {
+        //        isAvoidingTheBombs = true;
+        //        stateMachine.ChangeState(AvoidingBombs.Instance);
+        //    }
+        //}
+        if(aiNode.isBomb)
+            Debug.Log(aiNode.gridX + "," + aiNode.gridY + " => " + aiNode.timeToExplode);
+        else
+            Debug.Log(aiNode.gridX + "," + aiNode.gridY + " => " + aiNode.TimeToExplode());
     }
 
     public void WalkTo(Node destination,Action<bool> callbackWalking)
