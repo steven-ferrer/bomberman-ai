@@ -1,9 +1,10 @@
-﻿namespace StateStuff{
-	public class StateMachine<T>{
+﻿namespace StateMachine{
+	public class FiniteStateMachine<T>{
         public State<T> currentState { get; private set; }
 		public T Owner;
 
-		public StateMachine(T _owner){
+    public FiniteStateMachine(T _owner)
+    {
 			Owner = _owner;
 			currentState = null;
 		}

@@ -52,12 +52,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Algorithms\AI\AI.cs" />
-     <Compile Include="Assets\Scripts\Algorithms\AI\AvoidingBombs.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\EvadingBombs.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AI\ExploringMap.cs" />
+     <Compile Include="Assets\Scripts\Algorithms\AI\FiniteStateMachine.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AI\PathRequestManager.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AI\Searching.cs" />
-     <Compile Include="Assets\Scripts\Algorithms\AI\StateMachine.cs" />
-     <Compile Include="Assets\Scripts\Algorithms\AI\Tracking.cs" />
      <Compile Include="Assets\Scripts\Algorithms\AStar.cs" />
      <Compile Include="Assets\Scripts\Algorithms\GridScript.cs" />
      <Compile Include="Assets\Scripts\Datastructure\Heap.cs" />

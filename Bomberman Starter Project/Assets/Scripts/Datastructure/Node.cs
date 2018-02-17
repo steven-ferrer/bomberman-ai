@@ -6,13 +6,13 @@ using System.Linq;
 public class DropRange
 {
     public Node parentBomb;
-    public float timeToExplode;
+    public float explodingTime;
     private MonoBehaviour monoBehaviour;
 
     public DropRange(Node _parentBomb, float _timeToExplode,MonoBehaviour _monoBehaviour)
     {
         parentBomb = _parentBomb;
-        timeToExplode = _timeToExplode;
+        explodingTime = _timeToExplode;
         monoBehaviour = _monoBehaviour;
         monoBehaviour.StartCoroutine(this.StartTimer());
     }
@@ -21,11 +21,12 @@ public class DropRange
     {
         while (true)
         {
-            if (this.timeToExplode == 0)
+            if (this.explodingTime == 0)
             {
+                this.explodingTime = -1; 
                 yield break;
             }
-            this.timeToExplode--;
+            this.explodingTime--;
             yield return new WaitForSeconds(1f);
         }
     }
@@ -72,7 +73,7 @@ public class Node : IHeapItem<Node>
                 if (drop.parentBomb == bomb)
                 {
                     drop.StopTimer();
-                    drop.timeToExplode = 0;
+                    drop.explodingTime = 0;
                 }
             }
             dropList.RemoveAll(x => x.parentBomb == bomb);
@@ -89,19 +90,17 @@ public class Node : IHeapItem<Node>
         dropList.Clear();
     }
 
-    public float TimeToExplode()
+    public float GetTimeToExplode()
     {
         if (dropList.Count > 0)
         {
-            List<float> countdowns = dropList.Select(x => x.timeToExplode).ToList();
-            if (dropList.Count > 1)
-                countdowns = countdowns.OrderBy(i => i).ToList();
-
-            return countdowns.First();
+            float[] countdowns = dropList.Select(x => x.explodingTime).ToArray();
+            return countdowns.Min();
         }
         else
-            return 0f;
+            return -1f;
     }
+
 
     public Node(bool walkable, bool destructible, Vector3 worldPosition, int gridX, int gridY)
     {

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using StateStuff;
+using StateMachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,36 +33,33 @@ public class Searching : State<AI>
 
     public override void EnterState(AI _owner)
     {
-        Debug.Log("Start searching...");
+        Debug.Log("-SEARCHING STATE-");
     }
 
     public override void ExitState(AI _owner)
     {
-        Debug.Log("Exit searching...");
     }
 
     public override void UpdateState(AI _owner)
     {
-        if (!_owner.isAvoidingTheBombs)
+        _owner.aiNode = _owner.grid.NodeFromWorldPoint(_owner.transform.position);
+        _owner.accessibleTiles = _owner.grid.GetAccessibleTiles(_owner.aiNode);
+        if (_owner.accessibleTiles.Any(v => v.agentName != null && v.agentName != _owner.transform.name))
         {
-            if (_owner.accessibleTiles.Any(v => v.agentName != null && v.agentName != _owner.transform.name))
+
+        }
+        else if (_owner.accessibleTiles.Any(v => v.isBomb == true))
+        {
+            if (_owner.stateMachine.currentState != EvadingBombs.Instance)
             {
-                Debug.Log("Enemy found.");
+                _owner.stateMachine.ChangeState(EvadingBombs.Instance);
             }
-            else if (_owner.accessibleTiles.Any(v => v.isBomb == true))
+        }
+        else
+        {
+            if (_owner.stateMachine.currentState != ExploringMap.Instance)
             {
-                //Search for another destructible wall to destroy
-                ExploringMap.Instance.placeAnotherBomb = true;
                 _owner.stateMachine.ChangeState(ExploringMap.Instance);
-            }
-            else
-            {
-                if (_owner.stateMachine.currentState != ExploringMap.Instance)
-                {
-                    Debug.Log("No enemy or bomb found.");
-                    ExploringMap.Instance.placeAnotherBomb = false;
-                    _owner.stateMachine.ChangeState(ExploringMap.Instance);
-                }
             }
         }
     }

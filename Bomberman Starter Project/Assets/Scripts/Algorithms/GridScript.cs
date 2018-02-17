@@ -67,6 +67,7 @@ public class GridScript : MonoBehaviour
                 if (n.agentName != null)
                     Gizmos.color = Color.green;
 
+                n.worldPosition.y = 0f;
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (NODE_DIAMETER - .1f));
             }
         }
@@ -464,6 +465,5 @@ public class GridScript : MonoBehaviour
         }
         return null;
     }
-
 
 }

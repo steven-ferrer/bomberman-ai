@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using StateStuff;
+using StateMachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,6 @@ public class ExploringMap : State<AI>
     private static ExploringMap _instance;
     private AI owner;
     private const int PLACING_POSITIONS_LIMIT = 6; //how many positions to search where to place the bombs
-    public bool placeAnotherBomb = false;
 
     private ExploringMap()
     {
@@ -35,12 +34,9 @@ public class ExploringMap : State<AI>
     public override void EnterState(AI _owner)
     {
         owner = _owner;
-        Debug.Log("Start exploring the map...");
+        Debug.Log("-EXPLORING MAP STATE-");
 
-        if (placeAnotherBomb == true)
-            _owner.StartCoroutine(this.PlaceAnotherBomb());
-        else
-            _owner.StartCoroutine(this.PlaceBomb());
+        _owner.StartCoroutine(this.PlaceBomb());
     }
 
     public override void ExitState(AI _owner)
@@ -50,7 +46,6 @@ public class ExploringMap : State<AI>
 
     public override void UpdateState(AI _owner)
     {
-
     }
 
     private bool IsSafeToPlaceTheBomb(Node bombPosition)
@@ -101,29 +96,18 @@ public class ExploringMap : State<AI>
             {
                 if (IsSafeToPlaceTheBomb(bombPosition))
                 {
-                    Node bombPos = bombPosition;
-                    if (((bombPosition.gridX % 2) == 0) || ((bombPosition.gridY % 2) == 0))
-                    {
-                        bombPos = owner.grid.GetNeighbours(bombPosition).Find(x => x.walkable == true);
-                        if (!IsSafeToPlaceTheBomb(bombPos))
-                        {
-                            bombPos = bombPosition;
-                        }
-                    }
+                    Debug.Log("(Placing the bomb at " + bombPosition.gridX + "," + bombPosition.gridY + ")");
+                    owner.visualBombPosition = bombPosition;
 
-                    Debug.Log("place bomb to " + bombPos.gridX + "," + bombPos.gridY);
-                    owner.visualBombPosition = bombPos;
-
-                    if (bombPos == owner.aiNode)
+                    if (bombPosition == owner.aiNode)
                     {
-                        owner.agent.DropBomb();
-                        owner.stateMachine.ChangeState(Searching.Instance);
+                        DropBomb();
                         yield break;
                     }
 
-                    owner.WalkTo(bombPos, DoneWalking);
+                    owner.WalkTo(bombPosition, DoneWalking);
                     success = true;
-                    yield break; //for now on it can place only one bomb to destroy the walls
+                    yield break; //for now on it can place only one bomb at a time to destroy the walls
                 }
             }
         }
@@ -131,40 +115,66 @@ public class ExploringMap : State<AI>
             owner.stateMachine.ChangeState(Searching.Instance);
     }
 
-    private IEnumerator PlaceAnotherBomb()
-    {
-        yield return new WaitForSeconds(0.5f);
-        bool success = false;
-        foreach (Node bombPos in GetBombPositions())
-        {
-            if (IsSafeToPlaceTheBomb(bombPos))
-            {
-                Debug.Log("place bomb to " + bombPos.gridX + "," + bombPos.gridY);
-                owner.visualBombPosition = bombPos;
-
-                if (bombPos == owner.aiNode)
-                {
-                    owner.agent.DropBomb();
-                    owner.stateMachine.ChangeState(Searching.Instance);
-                    yield break;
-                }
-
-                owner.WalkTo(bombPos, DoneWalking);
-                success = true;
-                yield break;
-            }
-        }
-        if (!success)
-            owner.stateMachine.ChangeState(Searching.Instance);
-    }
-
     public void DoneWalking(bool success)
     {
         if (success)
+            DropBomb();
+        else
+            owner.stateMachine.ChangeState(Searching.Instance);
+    }
+
+    private void DropBomb()
+    {
+        //Check if there is a danger in path when evading the bomb
+        if (CanEvadeTheBombInTime())
         {
-            Debug.Log("Done walking!");
             owner.agent.DropBomb();
             owner.visualBombPosition = null;
-        }
+            owner.stateMachine.ChangeState(EvadingBombs.Instance);
+        }else
+            owner.stateMachine.ChangeState(Searching.Instance);
     }
+
+    private bool CanEvadeTheBombInTime()
+    {
+        owner.aiNode = owner.grid.NodeFromWorldPoint(owner.transform.position);
+        List<Node> bombRange = owner.grid.GetNeighbours(owner.aiNode, owner.bombScript.bombRange);
+        bombRange.Add(owner.aiNode);
+        List<Node> safeNodes = new List<Node>();
+
+        foreach (Node node in owner.accessibleTiles)
+        {
+            if (node.isBomb)
+                continue;
+            if (node.GetDropRangeCount() > 0)
+                continue;
+            if (bombRange.Contains(node))
+                continue;
+
+            Node[] waypoints = PathRequestManager.GetWaypoints(owner.aiNode, node);
+            if (waypoints.Length > 0)
+            {
+                if (waypoints.Any(x => x.GetTimeToExplode() == 1 || x.GetTimeToExplode() == 0))
+                {
+                    foreach (Node n in waypoints)
+                    {
+                        if (n.isBomb || n.GetDropRangeCount() > 0) 
+                        {
+                            return false;
+                        }
+                        if (n.GetTimeToExplode() >= 0 && n.GetTimeToExplode() <= 1)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+
+        return true;
+    }
+
+
 }

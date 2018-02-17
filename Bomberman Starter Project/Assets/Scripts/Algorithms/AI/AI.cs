@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.Linq;
-using StateStuff;
+using StateMachine;
 using System;
 
 public class AI : MonoBehaviour 
 {
-    public StateMachine<AI> stateMachine { get; set; }
+    public FiniteStateMachine<AI> stateMachine { get; set; }
 
     public GridScript grid;
     public Bomb bombScript;
@@ -22,11 +22,14 @@ public class AI : MonoBehaviour
 
     public List<Node> accessibleTiles { set; get; }
     public Node aiNode { set; get; }
-    public bool isAvoidingTheBombs { set; get; }
 
     public Node visualBombPosition;
     public Node visualSafePosition;
-    public List<Node> visualNodes;
+    public Node[] visualPath;
+    int targetIndex;
+
+    private Node source;
+    private Node des;
 
     Action<bool> callbackWalking;
 
@@ -34,20 +37,20 @@ public class AI : MonoBehaviour
     {
         if (visualBombPosition != null)
         {
-            Gizmos.color = Color.cyan;
+            Gizmos.color = Color.gray;
             Gizmos.DrawCube(visualBombPosition.worldPosition, Vector3.one);
         }
         if (visualSafePosition != null)
         {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawCube(visualBombPosition.worldPosition, Vector3.one);
+            Gizmos.DrawCube(visualSafePosition.worldPosition, Vector3.one);
         }
-        if (visualNodes != null && visualNodes.Count > 0)
+        if (visualPath != null && visualPath.Length > 0)
         {
-            foreach (Node node in visualNodes)
+            for (int i = targetIndex; i < visualPath.Length; i++)
             {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawCube(node.worldPosition, Vector3.one);
+                Gizmos.color = Color.white;
+                Gizmos.DrawWireCube(visualPath[i].worldPosition, Vector3.one);
             }
         }
     }
@@ -60,13 +63,13 @@ public class AI : MonoBehaviour
 
     private void Start()
     {
-        stateMachine = new StateMachine<AI>(this);
-        //Invoke("StartState", 2f);
+        stateMachine = new FiniteStateMachine<AI>(this);
+        Invoke("StartState", 2f);
     }
 
     private void StartState()
     {
-        stateMachine.ChangeState(ExploringMap.Instance);
+        stateMachine.ChangeState(Searching.Instance);
     }
 
     private void Update()
@@ -76,36 +79,18 @@ public class AI : MonoBehaviour
             walking = false;
             animator.SetBool("Walking", walking);
         }
-
-        aiNode = grid.NodeFromWorldPoint(transform.position);
-        accessibleTiles = grid.GetAccessibleTiles(aiNode);
-        CheckIfInDanger();
         stateMachine.Update();
-    }
-
-    private void CheckIfInDanger()
-    {
-        //if (!isAvoidingTheBombs)
-        //{
-        //    if (aiNode.GetDropRangeCount() > 0 || aiNode.isBomb) //In range of bomb
-        //    {
-        //        isAvoidingTheBombs = true;
-        //        stateMachine.ChangeState(AvoidingBombs.Instance);
-        //    }
-        //}
-        if(aiNode.isBomb)
-            Debug.Log(aiNode.gridX + "," + aiNode.gridY + " => " + aiNode.timeToExplode);
-        else
-            Debug.Log(aiNode.gridX + "," + aiNode.gridY + " => " + aiNode.TimeToExplode());
     }
 
     public void WalkTo(Node destination,Action<bool> callbackWalking)
     {
         this.callbackWalking = callbackWalking;
         PathRequestManager.RequestPath(new PathRequest(aiNode, destination, OnPathFound));
+        source = aiNode;
+        des = destination;
     }
 
-    private void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    private void OnPathFound(Node[] newPath, bool pathSuccessful)
     {
         if (pathSuccessful)
         {
@@ -119,27 +104,45 @@ public class AI : MonoBehaviour
         }
     }
 
-    private IEnumerator FollowThePath(Vector3[] path)
+    private IEnumerator FollowThePath(Node[] path)
     {
-        int targetIndex = -1;
-        Vector3 currentWaypoint = path[0];
-        currentWaypoint.y = 1f;
-        doneFollowThePath = false;
-        Debug.Log("Start walking...");
+        Vector3 currentWaypoint = path[0].worldPosition;
+        List<Node> temp = path.ToList();
+        temp.Insert(0, source);
+        temp.Add(des);
+        path = temp.ToArray();
 
+        currentWaypoint.y = 1f;
+        targetIndex = 0;
+        doneFollowThePath = false;
+        visualPath = path;
+        
         while (true)
         {
             if (transform.position == currentWaypoint)
             {
                 targetIndex++;
-                if (targetIndex >= path.Length)
+                if (targetIndex >= path.Length - 1)
                 {
                     doneFollowThePath = true;
                     yield break;
                 }
-                path[targetIndex].y = 1f;
-                currentWaypoint = path[targetIndex];
+                path[targetIndex].worldPosition.y = 1f;
+                currentWaypoint = path[targetIndex].worldPosition;
             }
+            //Node node = grid.NodeFromWorldPoint(currentWaypoint);
+            //if (node.isBomb || node.GetDropRangeCount() > 0)
+            //{
+            //    if (node.GetTimeToExplode() >= 0 && node.GetTimeToExplode() <= 1)
+            //    {
+            //        Debug.Log(node.gridX + "," + node.gridY + " => " + node.GetTimeToExplode());
+            //        while (node.isBomb || node.GetDropRangeCount() > 0)
+            //        {
+            //            yield return null;
+            //        }
+            //        yield return new WaitForSeconds(0.5f);
+            //    }
+            //}
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
             walking = true;
             UpdateAnimationMovement(transform.position, currentWaypoint);
@@ -153,7 +156,9 @@ public class AI : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
 
         yield return new WaitForSeconds(0.1f);
+        visualPath = null;
         callbackWalking(true);
+        yield break;
     }
 
     public void UpdateAnimationMovement(Vector3 currentPos, Vector3 nextPos)
