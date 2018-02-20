@@ -1,11 +1,11 @@
 # Bomberman AI
 #### Evolving AI using Genetic Programming Technique applied to Bomberman. 
 
-> The game is currently on development. Anyone can pull a request if you found a bug or you want to optimize the game.
+> The game is currently under development. Anyone can pull a request if you found a bug or you want to optimize the game.
 > You can also clone the repository and use it to your own projects (credit to me).
-> Our aim is to implement the algorithms in this game such as A* pathfinding for Aggressive and Defensive behavior of Predefined-AI and Evolving AI using Genetic algorithm
+> Our aim is to implement the algorithms such as A* pathfinding for Aggressive and Defensive behavior of Predefined-AI and Evolving AI using Genetic algorithm in this game.
 
- You can check our documentation included to this repository to know more about the artificial intelligence for bomberman game and our main objectives.
+ You can check our documentation included in this repository to know more about the artificial intelligence for bomberman game and our main objectives.
  
  ### Todos
  - Aggressive AI (`predefined behaviors or sets of instructions`)
@@ -15,7 +15,7 @@
  
 # About the game
 ## Objectives
-The aim of this study is to develop an algorithm using Genetic Programming Technique for evolving AI in the game Bomberman. 
+The aim of this study is to develop an algorithm using Genetic Programming Technique for evolving AI in the Bomberman game. 
 It is also aimed to implement other AI agents using pre-defined heuristic in order to improve the skills of Evolving AI. 
 Specifically, it is aimed to achieve the following objectives: 
 
@@ -32,7 +32,7 @@ Specifically, it is aimed to achieve the following objectives:
 The game is from the tutorials [How to Make a Game Like Bomberman](https://www.raywenderlich.com/125559/make-game-like-bomberman) by [Eric Van de Kerckhove](https://www.raywenderlich.com/u/blackdragonbe). Thanks a lot to him for the Starter Project of Bomberman
 
 ### Features
-I added new features of the game does not in the tutorials such as:
+I added new features to the game that is not included in the tutorials such as:
 - Destructible Walls (`can be destroy by bomb explosion`)
 - Max Bomb (`limit the bombs can be drop`)
 - Auto Generated Map (`generate a random destructible walls on map`)
