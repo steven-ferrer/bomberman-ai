@@ -33,9 +33,9 @@ The game is from the tutorials [How to Make a Game Like Bomberman](https://www.r
 
 ### Features
 I added new features to the game that is not included in the tutorials such as:
-- Destructible Walls (`can be destroy by bomb explosion`)
-- Max Bomb (`limit the bombs can be drop`)
-- Auto Generated Map (`generate a random destructible walls on map`)
+- Destructible Walls (`can be destroyed by bomb explosion`)
+- Max Bomb (`limit the bombs that can be dropped`)
+- Auto Generated Map (`generate random destructible walls on map`)
 [Tutorial](https://www.youtube.com/watch?v=SviIeTt2_Lc&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0)
 
 ![Map Generator](https://github.com/ivanarnieranario/bomberman-ai/blob/ai/aggressive/Notes/images/Map%20Generator.PNG)
